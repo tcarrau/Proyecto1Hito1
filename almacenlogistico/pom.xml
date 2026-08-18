@@ -9,8 +9,37 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <!-- Imprescindible: las interfaces de la catedra usan identificadores con
+             caracteres no ASCII (por ejemplo el metodo tamaño()). Sin forzar UTF-8
+             el compilador usa el encoding por defecto de Windows (Cp1252) y falla
+             con errores del tipo "cannot find symbol". -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- 'release' en lugar de source/target: garantiza que no se usen APIs
+             mas nuevas que Java 17 aunque se compile con un JDK 20. -->
+        <maven.compiler.release>17</maven.compiler.release>
+
+        <junit.version>5.10.2</junit.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
