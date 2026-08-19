@@ -1,15 +1,11 @@
-package ucu.edu.Implementaciones;
+package ucu.edu.implementaciones;
 
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.Predicate;
 import ucu.edu.aed.tda.TDALista;
 
-/**
- * Implementacion de {@link TDALista} basada en un arreglo redimensionable.
- *
- * @param <T> tipo de los elementos almacenados
- */
+
 public class ListaArray<T> implements TDALista<T> {
     private T[] lista;
     private int proximo;
@@ -20,6 +16,13 @@ public class ListaArray<T> implements TDALista<T> {
             throw new IllegalArgumentException("La capacidad no puede ser negativa");
         }
         lista = (T[]) new Object[capacidad];
+        proximo = 0;
+    }
+
+    @SuppressWarnings("unchecked")
+    public ListaArray() {
+        
+        lista = (T[]) new Object[1];
         proximo = 0;
     }
 
