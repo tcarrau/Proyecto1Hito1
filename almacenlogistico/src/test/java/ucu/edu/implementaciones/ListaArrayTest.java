@@ -9,7 +9,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Comparator;
 import org.junit.jupiter.api.Test;
+
 import ucu.edu.aed.tda.TDALista;
+import ucu.edu.implementaciones.ListaArray;
 
 class ListaArrayTest {
 
@@ -40,7 +42,7 @@ class ListaArrayTest {
 
     @Test
     void agregarEnIndiceDesplazaLosElementosPosteriores() {
-        ListaArray<String> lista = listaDe("A", "C");
+        ListaArray<String> lista = listaDe("A", "C"); 
 
         lista.agregar(1, "B");
         lista.agregar(3, "D");
