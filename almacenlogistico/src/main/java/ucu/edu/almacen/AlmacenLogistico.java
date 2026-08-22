@@ -3,10 +3,14 @@ package ucu.edu.almacen;
 import ucu.edu.implementaciones.ListaArray;
 import ucu.edu.implementaciones.Cola;
 
+import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
+import java.time.*;
+
 public class AlmacenLogistico {
     private ListaArray<DetalleProducto> productos;
     private ListaArray<TerminalCarga> terminales;
-    private ColaConPrioridad<PedidoSucursal> pedidosPendientes;
+    private PriorityQueue<PedidoSucursal> pedidosPendientes;
     private Cola<EntregaProveedor> esperaProveedores;
 
 
@@ -16,6 +20,13 @@ public class AlmacenLogistico {
         this.esperaProveedores = new Cola<>(15);
 
     }
+
+/*
+        ==================================
+        ====== Cosas con inventario ======
+        ==================================
+*/
+
 
     public void registrarProducto(Producto producto) {
         // validar que no exista y agregarlo al inventario
@@ -78,15 +89,17 @@ public class AlmacenLogistico {
         }
 
         DetalleProducto detalleProducto = buscarProducto(codigo);
+        if (detalleProducto == null) {
+            return false;
+        }
+
         int cant = detalleProducto.getCantidad();
-        if(cant >= cantidad && detalleProducto != null){
+        if (cant >= cantidad) {
             detalleProducto.setCantidad(cant - cantidad);
             return true;
         }
-        else {
-            return false;
-        }
-        
+
+        return false;
     }
 
     public ListaArray<Producto> productosConStockBajo() {
@@ -115,4 +128,88 @@ public class AlmacenLogistico {
             System.out.println(detalle.toString());
         }
     }
+
+
+    /*
+            ==============================================
+            ====== Cosas con entrega de proveedores ======
+            ==============================================
+    */
+
+    /*
+     Registra una entrega de proveedor en la cola de espera.
+     */
+    public void registrarEntregaProveedor(EntregaProveedor entrega) {
+        // validar y encolar la entrega.
+
+        if(entrega == null){
+            throw new UnsupportedOperationException("no se puede agregar una entrega vacia");
+        }
+
+        if (entrega.getProveedor() == null
+                || entrega.getProductos() == null
+                || entrega.getFecha() == null) {
+            throw new UnsupportedOperationException("Alguno de los datos de la entrega no es valido");
+        }
+
+
+        esperaProveedores.poneEnCola(entrega);
+        
+    }
+
+    /**
+     * Obtiene la próxima entrega pendiente sin retirarla de la cola.
+     */
+    public EntregaProveedor obtenerSiguienteEntregaProveedor() {
+        // consultar la primera entrega en espera.
+        if (esperaProveedores.esVacia()) {
+            throw new NoSuchElementException("No hay entregas pendientes");
+        }
+
+        return esperaProveedores.frente();
+    }
+
+    /**
+     * Descarga la próxima entrega pendiente y actualiza el stock.
+     */
+    public EntregaProveedor descargarSiguienteEntregaProveedor() {
+        //  desencolar la entrega y actualizar el inventario.
+        EntregaProveedor entrega = esperaProveedores.quitaDeCola();
+        actualizarStockEntrega(entrega);
+        return entrega;
+    }
+
+    /**
+     * Indica si existen entregas de proveedores pendientes.
+     */
+    public boolean hayEntregasPendientes() {
+        // consultar el estado de la cola de proveedores.
+        return !esperaProveedores.esVacia();
+    }
+
+    /**
+     * Devuelve la cantidad de entregas de proveedores pendientes.
+     */
+    public int cantidadEntregasPendientes() {
+        //  obtener la cantidad de elementos de la cola.
+        if (esperaProveedores == null) {
+            return 0;
+        }
+        else {
+            return esperaProveedores.tamaño();
+        }
+    }
+
+    /**
+     * Actualiza el stock de todos los productos incluidos en una entrega.
+     */
+    private void actualizarStockEntrega(EntregaProveedor entrega) {
+        EntregaProveedor nuevaEntrega = obtenerSiguienteEntregaProveedor();
+
+        for(int i = 0; i < nuevaEntrega.getProductos().tamaño(); i++){
+            DetalleProducto detalle = nuevaEntrega.getProductos().obtener(i);
+            aumentarStock(detalle.getProducto().getCodigo(), detalle.getCantidad());
+        }
+    }
+    
 }
