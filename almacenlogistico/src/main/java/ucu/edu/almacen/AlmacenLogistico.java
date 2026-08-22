@@ -1,11 +1,10 @@
 package ucu.edu.almacen;
 
-import ucu.edu.implementaciones.ListaArray;
-import ucu.edu.implementaciones.Cola;
-
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
-import java.time.*;
+
+import ucu.edu.implementaciones.Cola;
+import ucu.edu.implementaciones.ListaArray;
 
 public class AlmacenLogistico {
     private ListaArray<DetalleProducto> productos;
@@ -18,6 +17,7 @@ public class AlmacenLogistico {
         this.productos = new ListaArray<>();
         this.terminales = new ListaArray<>();
         this.esperaProveedores = new Cola<>(15);
+        this.pedidosPendientes = new PriorityQueue<>((pedido1, pedido2) -> Integer.compare(pedido2.getPrioridad(), pedido1.getPrioridad()));
 
     }
 
@@ -96,6 +96,24 @@ public class AlmacenLogistico {
         int cant = detalleProducto.getCantidad();
         if (cant >= cantidad) {
             detalleProducto.setCantidad(cant - cantidad);
+            return true;
+        }
+
+        return false;
+    }
+
+    public boolean hayCantNecesarias(String codigo, int cantidad){
+        if (cantidad <= 0) {
+            return false;
+        }
+
+        DetalleProducto detalleProducto = buscarProducto(codigo);
+        if (detalleProducto == null) {
+            return false;
+        }
+
+        int cant = detalleProducto.getCantidad();
+        if (cant >= cantidad) {
             return true;
         }
 
@@ -212,5 +230,134 @@ public class AlmacenLogistico {
     }
     
 
-    
+/*
+        ============================================================
+        ============= Reabastecimientos de sucursales ==============
+        ============================================================
+*/
+
+/**
+ * Registra un pedido para despachar a una sucursal.
+ * La prioridad debe basarse en los clientes promedio de la sucursal.
+ */
+public void registrarPedidoReabastecimiento(PedidoSucursal pedido) {
+
+    if(pedido == null || pedido.getSucursal() == null || pedido.getProductos() == null || pedido.getFecha() == null){
+        throw new UnsupportedOperationException("El pedido no puede ser null");
+    }
+    pedido.setPrioridad(calcularPrioridadPedido(pedido));
+    pedidosPendientes.offer(pedido);
+}
+
+/**
+ * Obtiene el pedido de mayor prioridad sin retirarlo de la cola.
+ */
+public PedidoSucursal obtenerSiguientePedidoReabastecimiento() {
+
+    if(pedidosPendientes.isEmpty()){
+        return null;
+    }
+    return pedidosPendientes.peek();
+}
+
+/**
+ * Despacha el pedido de mayor prioridad y descuenta los productos del inventario.
+ * Tiene que haber la cantidad de productos necesarios si no no se hace el despacho
+ */
+public PedidoSucursal despacharSiguientePedidoReabastecimiento() {
+
+    if(!hayPedidosReabastecimientoPendientes()){
+        return null;
+    }
+
+    PedidoSucursal pedidoADespachar = pedidosPendientes.peek();
+    if(!hayStockSuficienteParaPedido(pedidoADespachar)){
+        return null;
+    }
+
+    actualizarStockDespacho(pedidoADespachar);
+
+    return pedidosPendientes.poll();
+
+}
+
+/**
+ * Indica si hay pedidos de reabastecimiento pendientes.
+ */
+public boolean hayPedidosReabastecimientoPendientes() {
+
+    return pedidosPendientes.isEmpty() ? false : true;
+}
+
+/**
+ * Devuelve la cantidad de pedidos de reabastecimiento pendientes.
+ */
+public int cantidadPedidosReabastecimientoPendientes() {
+
+    return pedidosPendientes.size();
+}
+
+/**
+ * Calcula la prioridad de un pedido usando los clientes promedio de su sucursal.
+ */
+private int calcularPrioridadPedido(PedidoSucursal pedido) {
+
+    return pedido.getSucursal().getClientesPromedio();
+
+}
+
+/**
+ * Verifica que exista stock suficiente para todos los productos del pedido.
+ */
+private boolean hayStockSuficienteParaPedido(PedidoSucursal pedido) {
+    for(int i = 0; i < pedido.getProductos().tamaño(); i++){
+        DetalleProducto detalleActual = pedido.getProductos().obtener(i);
+        String codigo = detalleActual.getProducto().getCodigo();
+        boolean productoYaProcesado = false;
+
+        // Evita validar más de una vez un producto que aparece repetido.
+        for (int j = 0; j < i; j++) {
+            DetalleProducto detalleAnterior = pedido.getProductos().obtener(j);
+
+            if (detalleAnterior.getProducto().getCodigo().equals(codigo)) {
+                productoYaProcesado = true;
+                break;
+            }
+        }
+
+        if (productoYaProcesado) {
+            continue;
+        }
+
+        int cantidadTotalSolicitada = 0;
+
+        // Suma todas las líneas del pedido que corresponden al mismo producto.
+        for (int j = i; j < pedido.getProductos().tamaño(); j++) {
+            DetalleProducto detalle = pedido.getProductos().obtener(j);
+
+            if (detalle.getProducto().getCodigo().equals(codigo)) {
+                cantidadTotalSolicitada += detalle.getCantidad();
+            }
+        }
+
+        boolean hayCantNecesaria = hayCantNecesarias(codigo, cantidadTotalSolicitada);
+
+        if(!hayCantNecesaria){
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * Descuenta del inventario los productos incluidos en un pedido despachado.
+ */
+private void actualizarStockDespacho(PedidoSucursal pedido) {
+
+    for(int i = 0; i < pedido.getProductos().tamaño(); i++){
+        disminuirStock(pedido.getProductos().obtener(i).getProducto().getCodigo(), pedido.getProductos().obtener(i).getCantidad());
+    }
+}
+
 }
