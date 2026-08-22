@@ -584,7 +584,7 @@ public class AlmacenLogistico {
 
         return productosSinStock;
     }
-    
+
     /*
      * ============================================================
      * ============= Terminales ==============
