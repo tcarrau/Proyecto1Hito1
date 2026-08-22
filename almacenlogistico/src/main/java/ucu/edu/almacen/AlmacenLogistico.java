@@ -204,12 +204,13 @@ public class AlmacenLogistico {
      * Actualiza el stock de todos los productos incluidos en una entrega.
      */
     private void actualizarStockEntrega(EntregaProveedor entrega) {
-        EntregaProveedor nuevaEntrega = obtenerSiguienteEntregaProveedor();
 
-        for(int i = 0; i < nuevaEntrega.getProductos().tamaño(); i++){
-            DetalleProducto detalle = nuevaEntrega.getProductos().obtener(i);
+        for(int i = 0; i < entrega.getProductos().tamaño(); i++){
+            DetalleProducto detalle = entrega.getProductos().obtener(i);
             aumentarStock(detalle.getProducto().getCodigo(), detalle.getCantidad());
         }
     }
+    
+
     
 }

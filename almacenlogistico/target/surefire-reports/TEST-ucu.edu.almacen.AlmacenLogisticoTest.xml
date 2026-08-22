@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="ucu.edu.almacen.AlmacenLogisticoTest" time="0.074" tests="5" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="ucu.edu.almacen.AlmacenLogisticoTest" time="0.165" tests="25" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -7,12 +7,14 @@
     <property name="java.vm.vendor" value="Eclipse Adoptium"/>
     <property name="sun.arch.data.model" value="64"/>
     <property name="java.vendor.url" value="https://adoptium.net/"/>
+    <property name="user.timezone" value="America/Montevideo"/>
     <property name="os.name" value="Mac OS X"/>
     <property name="java.vm.specification.version" value="17"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="ES"/>
     <property name="sun.boot.library.path" value="/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/target/surefire/surefirebooter-20260821230446948_3.jar /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/target/surefire 2026-08-21T23-04-46_843-jvmRun1 surefire-20260821230446948_1tmp surefire_0-20260821230446948_2tmp"/>
+    <property name="sun.java.command" value="/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/target/surefire/surefirebooter-20260822091837482_3.jar /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/target/surefire 2026-08-22T09-18-37_374-jvmRun1 surefire-20260822091837482_1tmp surefire_0-20260822091837482_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/target/test-classes:/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/target/classes:/Users/tomascarrau/.m2/repository/org/junit/jupiter/junit-jupiter/5.10.2/junit-jupiter-5.10.2.jar:/Users/tomascarrau/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.10.2/junit-jupiter-api-5.10.2.jar:/Users/tomascarrau/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/tomascarrau/.m2/repository/org/junit/platform/junit-platform-commons/1.10.2/junit-platform-commons-1.10.2.jar:/Users/tomascarrau/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/Users/tomascarrau/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.10.2/junit-jupiter-params-5.10.2.jar:/Users/tomascarrau/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.10.2/junit-jupiter-engine-5.10.2.jar:/Users/tomascarrau/.m2/repository/org/junit/platform/junit-platform-engine/1.10.2/junit-platform-engine-1.10.2.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -25,10 +27,11 @@
     <property name="basedir" value="/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico"/>
     <property name="java.vm.compressedOopsMode" value="Zero based"/>
     <property name="line.separator" value="&#10;"/>
-    <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/target/surefire/surefirebooter-20260821230446948_3.jar"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/target/surefire/surefirebooter-20260822091837482_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="17.0.20+8"/>
     <property name="user.name" value="tomascarrau"/>
     <property name="path.separator" value=":"/>
@@ -51,11 +54,32 @@
     <property name="java.vm.version" value="17.0.20+8"/>
     <property name="java.specification.maintenance.version" value="1"/>
     <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="disminuirStockDescuentaCuandoHayCantidadSuficiente" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.029"/>
+  <testcase name="disminuirStockDeProductoNoRegistradoDevuelveFalse" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.022"/>
+  <testcase name="productosConStockBajoIncluyeStockMenorAlMinimo" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
+  <testcase name="descargarSiguienteEntregaProveedorActualizaStockYLaQuitaDeLaCola" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.015"/>
+  <testcase name="descargarEntregaRechazaCantidadesNoPositivas" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.003"/>
+  <testcase name="colaDeProveedoresNoSuperaSuCapacidadMaxima" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.008"/>
+  <testcase name="buscarProductoConCodigoNullDevuelveNull" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
+  <testcase name="disminuirStockDescuentaCuandoHayCantidadSuficiente" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
+  <testcase name="descargarSiguienteEntregaProveedorLanzaExcepcionSinEntregas" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
+  <testcase name="obtenerSiguienteEntregaProveedorNoLaQuitaDeLaCola" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
+  <testcase name="descargarEntregasRespetaElOrdenFifo" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
+  <testcase name="productosConStockBajoDevuelveListaVaciaConInventarioVacio" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.021"/>
   <testcase name="aumentarStockIncrementaLaCantidadDelProducto" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
+  <testcase name="descargarEntregaConProductoNoRegistradoLanzaExcepcion" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.008"/>
+  <testcase name="productosConStockBajoIncluyeStockIgualAlMinimo" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
   <testcase name="aumentarStockRechazaCantidadesNoPositivas" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.003"/>
-  <testcase name="registrarProductoLoAgregaConStockInicialCero" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="disminuirStockNoModificaElStockCuandoNoAlcanza" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
+  <testcase name="aumentarStockRechazaProductoNoRegistrado" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
+  <testcase name="registrarProductoLoAgregaConStockInicialCero" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.006"/>
+  <testcase name="registrarProductoRechazaProductoONombreDeCodigoInvalidos" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
+  <testcase name="registrarProductoDuplicadoNoReemplazaElProductoOriginal" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
+  <testcase name="disminuirStockNoModificaElStockCuandoNoAlcanza" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
+  <testcase name="disminuirStockConCantidadExactaDejaElStockEnCero" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
+  <testcase name="registrarEntregaProveedorLaAgregaALaCola" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
+  <testcase name="registrarEntregaProveedorRechazaEntregaSinDatosObligatorios" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
+  <testcase name="descargarEntregaConVariosProductosActualizaTodoElStock" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
+  <testcase name="obtenerSiguienteEntregaProveedorLanzaExcepcionSinEntregas" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
 </testsuite>
