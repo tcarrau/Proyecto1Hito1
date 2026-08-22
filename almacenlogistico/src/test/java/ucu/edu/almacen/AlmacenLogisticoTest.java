@@ -441,6 +441,72 @@ class AlmacenLogisticoTest {
         assertEquals(15, almacen.cantidadEntregasPendientes());
     }
 
+    @Test
+    void registrarTerminalLaAgregaYPermiteBuscarla() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+        TerminalCarga terminal = new TerminalCarga(10);
+
+        almacen.registrarTerminal(terminal);
+
+        assertSame(terminal, almacen.buscarTerminal(10));
+        assertEquals(1, almacen.obtenerTerminales().tamaño());
+        assertTrue(terminal.estaLibre());
+    }
+
+    @Test
+    void registrarTerminalRechazaTerminalNulaODuplicada() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+        almacen.registrarTerminal(new TerminalCarga(10));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> almacen.registrarTerminal(null));
+        assertThrows(IllegalArgumentException.class,
+                () -> almacen.registrarTerminal(new TerminalCarga(10)));
+    }
+
+    @Test
+    void noIniciaOperacionEnTerminalDeshabilitada() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+        almacen.registrarTerminal(new TerminalCarga(10));
+        almacen.cambiarHabilitacionTerminal(10, false);
+
+        assertThrows(IllegalStateException.class,
+                () -> almacen.iniciarOperacionEnTerminal(
+                        10, OperacionCarga.DESCARGANDO_PROVEEDOR));
+        assertEquals(OperacionCarga.LIBRE,
+                almacen.buscarTerminal(10).getOperacionActual());
+    }
+
+    @Test
+    void flujoTerminalIniciaOperacionImpideOtraYLuegoLaLibera() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+        almacen.registrarTerminal(new TerminalCarga(10));
+
+        almacen.iniciarOperacionEnTerminal(10, OperacionCarga.CARGANDO_SUCURSAL);
+
+        assertEquals(OperacionCarga.CARGANDO_SUCURSAL,
+                almacen.buscarTerminal(10).getOperacionActual());
+        assertFalse(almacen.buscarTerminal(10).estaLibre());
+        assertThrows(IllegalStateException.class,
+                () -> almacen.iniciarOperacionEnTerminal(
+                        10, OperacionCarga.DESCARGANDO_PROVEEDOR));
+
+        almacen.liberarTerminal(10);
+
+        assertEquals(OperacionCarga.LIBRE,
+                almacen.buscarTerminal(10).getOperacionActual());
+        assertTrue(almacen.buscarTerminal(10).estaLibre());
+    }
+
+    @Test
+    void datosBaseIncluyenDosTerminalesLibres() {
+        AlmacenLogistico almacen = new AlmacenLogistico(true);
+
+        assertEquals(2, almacen.obtenerTerminales().tamaño());
+        assertTrue(almacen.buscarTerminal(1).estaLibre());
+        assertTrue(almacen.buscarTerminal(2).estaLibre());
+    }
+
     private AlmacenLogistico almacenConProducto(String codigo) {
         AlmacenLogistico almacen = new AlmacenLogistico();
         almacen.registrarProducto(productoConCodigo(codigo));

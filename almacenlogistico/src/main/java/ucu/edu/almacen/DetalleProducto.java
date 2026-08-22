@@ -21,8 +21,10 @@ public class DetalleProducto {
         this.cantidad = cantidad;
     }
 
+    @Override
     public String toString(){
-        return("Producto : " + getProducto() + "\nCantidad : " + cantidad);
+        return "DetalleProducto{producto=" + producto + ", cantidad=" + cantidad
+                + ", cantidadMinima=" + cantMin + "}";
     }
 
     public int getCantidadMinima(){

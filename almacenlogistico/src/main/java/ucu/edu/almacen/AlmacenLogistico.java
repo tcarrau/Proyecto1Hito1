@@ -2,6 +2,7 @@ package ucu.edu.almacen;
 
 import java.util.NoSuchElementException;
 import java.util.PriorityQueue;
+import java.time.LocalDateTime;
 
 import ucu.edu.implementaciones.Cola;
 import ucu.edu.implementaciones.ListaArray;
@@ -14,12 +15,170 @@ public class AlmacenLogistico {
 
 
     public AlmacenLogistico() {
+        this(false);
+    }
+
+    /**
+     * Crea un almacén. Si cargarDatosBase es true, agrega datos de ejemplo
+     * para probar las funciones desde un menú interactivo.
+     */
+    public AlmacenLogistico(boolean cargarDatosBase) {
         this.productos = new ListaArray<>();
         this.terminales = new ListaArray<>();
         this.esperaProveedores = new Cola<>(15);
         this.pedidosPendientes = new PriorityQueue<>((pedido1, pedido2) -> Integer.compare(pedido2.getPrioridad(), pedido1.getPrioridad()));
 
+        if (cargarDatosBase) {
+            cargarDatosBase();
+        }
     }
+
+    /**
+     * Carga productos, una entrega pendiente y pedidos de sucursales de ejemplo.
+     */
+    private void cargarDatosBase() {
+        registrarTerminal(new TerminalCarga(1));
+        registrarTerminal(new TerminalCarga(2));
+
+        Producto yerba = crearProductoBase("P-001", "Yerba mate");
+        Producto leche = crearProductoBase("P-002", "Leche entera");
+        Producto arroz = crearProductoBase("P-003", "Arroz blanco");
+
+        registrarProducto(yerba);
+        registrarProducto(leche);
+        registrarProducto(arroz);
+        aumentarStock("P-001", 25);
+        aumentarStock("P-002", 12);
+        buscarProducto("P-001").setCantidadMinima(10);
+        buscarProducto("P-002").setCantidadMinima(8);
+        buscarProducto("P-003").setCantidadMinima(5);
+
+        Proveedor proveedor = new Proveedor();
+        proveedor.setCodigo("PROV-001");
+        proveedor.setNombre("Distribuidora del Sur");
+
+        ListaArray<DetalleProducto> productosEntrega = new ListaArray<>();
+        productosEntrega.agregar(crearDetalleBase(arroz, 30));
+        EntregaProveedor entrega = new EntregaProveedor();
+        entrega.setProveedor(proveedor);
+        entrega.setProductos(productosEntrega);
+        entrega.setFecha(LocalDateTime.now());
+        registrarEntregaProveedor(entrega);
+
+        Sucursal sucursalCentro = crearSucursalBase("SUC-001", "Centro", 400);
+        Sucursal sucursalNorte = crearSucursalBase("SUC-002", "Norte", 200);
+        registrarPedidoReabastecimiento(crearPedidoBase(
+                sucursalCentro, crearDetalleBase(yerba, 6)));
+        registrarPedidoReabastecimiento(crearPedidoBase(
+                sucursalNorte, crearDetalleBase(leche, 4)));
+    }
+
+    private Producto crearProductoBase(String codigo, String nombre) {
+        Producto producto = new Producto();
+        producto.setCodigo(codigo);
+        producto.setNombre(nombre);
+        return producto;
+    }
+
+    private DetalleProducto crearDetalleBase(Producto producto, int cantidad) {
+        DetalleProducto detalle = new DetalleProducto();
+        detalle.setProducto(producto);
+        detalle.setCantidad(cantidad);
+        return detalle;
+    }
+
+    private Sucursal crearSucursalBase(String codigo, String nombre, int clientesPromedio) {
+        Sucursal sucursal = new Sucursal();
+        sucursal.setCodigo(codigo);
+        sucursal.setNombre(nombre);
+        sucursal.setClientesPromedio(clientesPromedio);
+        return sucursal;
+    }
+
+    private PedidoSucursal crearPedidoBase(Sucursal sucursal, DetalleProducto detalle) {
+        ListaArray<DetalleProducto> productosPedido = new ListaArray<>();
+        productosPedido.agregar(detalle);
+
+        PedidoSucursal pedido = new PedidoSucursal();
+        pedido.setSucursal(sucursal);
+        pedido.setProductos(productosPedido);
+        pedido.setFecha(LocalDateTime.now());
+        return pedido;
+    }
+
+    /*
+            ==================================
+            ====== Terminales de carga ======
+            ==================================
+    */
+
+    public void registrarTerminal(TerminalCarga terminal) {
+        if (terminal == null) {
+            throw new IllegalArgumentException("La terminal no puede ser null");
+        }
+
+        if (buscarTerminal(terminal.getId()) != null) {
+            throw new IllegalArgumentException("Ya existe una terminal con ese id");
+        }
+
+        terminales.agregar(terminal);
+    }
+
+    public TerminalCarga buscarTerminal(int id) {
+        for (int i = 0; i < terminales.tamaño(); i++) {
+            TerminalCarga terminal = terminales.obtener(i);
+
+            if (terminal.getId() == id) {
+                return terminal;
+            }
+        }
+
+        return null;
+    }
+
+    public ListaArray<TerminalCarga> obtenerTerminales() {
+        return terminales;
+    }
+
+    public void cambiarHabilitacionTerminal(int id, boolean habilitada) {
+        TerminalCarga terminal = buscarTerminal(id);
+
+        if (terminal == null) {
+            throw new IllegalArgumentException("No existe una terminal con ese id");
+        }
+
+        terminal.setHabilitada(habilitada);
+    }
+
+    public void iniciarOperacionEnTerminal(int id, OperacionCarga operacion) {
+        TerminalCarga terminal = buscarTerminal(id);
+
+        if (terminal == null) {
+            throw new IllegalArgumentException("No existe una terminal con ese id");
+        }
+
+        if (operacion == null || operacion == OperacionCarga.LIBRE) {
+            throw new IllegalArgumentException("La operación debe ser de carga o descarga");
+        }
+
+        if (!terminal.estaLibre()) {
+            throw new IllegalStateException("La terminal no está disponible");
+        }
+
+        terminal.setOperacionActual(operacion);
+    }
+
+    public void liberarTerminal(int id) {
+        TerminalCarga terminal = buscarTerminal(id);
+
+        if (terminal == null) {
+            throw new IllegalArgumentException("No existe una terminal con ese id");
+        }
+
+        terminal.setOperacionActual(OperacionCarga.LIBRE);
+    }
+
+
 
 /*
         ==================================
@@ -424,5 +583,87 @@ public class AlmacenLogistico {
         }
 
         return productosSinStock;
+    }
+    
+    /*
+     * ============================================================
+     * ============= Terminales ==============
+     * ============================================================
+     */
+
+    private TerminalCarga buscarTerminalDisponible() {
+
+        for (int i = 0; i < terminales.tamaño(); i++) {
+            TerminalCarga terminal = terminales.obtener(i);
+            if (terminal.estaLibre()) {
+                return terminal;
+            }
+        }
+
+        return null;
+    }
+
+    public TerminalCarga asignarTerminalCarga(OperacionCarga operacion) {
+        TerminalCarga terminal = buscarTerminalDisponible();
+        if (terminal == null) {
+            return null;
+        }
+        terminal.setOperacionActual(operacion);
+        return terminal;
+    }
+
+    public void liberarTerminalCarga(TerminalCarga terminal) {
+        if (terminal == null) {
+            throw new IllegalArgumentException("La terminal no puede ser null");
+        }
+        terminal.setOperacionActual(OperacionCarga.LIBRE);
+    }
+
+    public ListaArray<TerminalCarga> terminalesLibres() {
+        ListaArray<TerminalCarga> libres = new ListaArray<>();
+        for (int i = 0; i < terminales.tamaño(); i++) {
+            TerminalCarga terminal = terminales.obtener(i);
+            if (terminal.estaLibre()) {
+                libres.agregar(terminal);
+            }
+        }
+        return libres;
+    }
+
+    public ListaArray<TerminalCarga> terminalesOcupadas() {
+        ListaArray<TerminalCarga> ocupadas = new ListaArray<>();
+        for (int i = 0; i < terminales.tamaño(); i++) {
+            TerminalCarga terminal = terminales.obtener(i);
+            if (!terminal.estaLibre()) {
+                ocupadas.agregar(terminal);
+            }
+        }
+        return ocupadas;
+    }
+
+    private TerminalCarga buscarTerminalPorId(int id) {
+        for (int i = 0; i < terminales.tamaño(); i++) {
+            TerminalCarga terminal = terminales.obtener(i);
+            if (terminal.getId() == id) {
+                return terminal;
+            }
+        }
+        return null;
+    }
+
+    public void deshabilitarTerminal(int id) {
+        TerminalCarga terminal = buscarTerminalPorId(id);
+        if (terminal == null) {
+            throw new IllegalArgumentException("No existe una terminal con ese ID");
+        }
+        terminal.setHabilitada(false);
+    }
+
+    public void habilitarTerminal(int id) {
+        TerminalCarga terminal = buscarTerminalPorId(id);
+        if (terminal == null) {
+            throw new IllegalArgumentException("No existe una terminal con ese ID");
+        }
+        terminal.setHabilitada(true);
     }
 }

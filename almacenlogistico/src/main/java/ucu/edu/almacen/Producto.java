@@ -4,6 +4,14 @@ public class Producto {
     private String codigo;
     private String nombre;
 
+    public Producto() {
+    }
+    
+    public Producto(String codigo, String nombre){
+        this.codigo = codigo;
+        this.nombre = nombre;
+    }
+
     public String getCodigo() {
         return codigo;
     }
@@ -18,5 +26,10 @@ public class Producto {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    @Override
+    public String toString() {
+        return "Producto{codigo='" + codigo + "', nombre='" + nombre + "'}";
     }
 }

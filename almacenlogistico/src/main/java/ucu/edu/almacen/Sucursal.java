@@ -28,4 +28,10 @@ public class Sucursal {
     public void setClientesPromedio(int clientesPromedio) {
         this.clientesPromedio = clientesPromedio;
     }
+
+    @Override
+    public String toString() {
+        return "Sucursal{codigo='" + codigo + "', nombre='" + nombre
+                + "', clientesPromedio=" + clientesPromedio + "}";
+    }
 }
