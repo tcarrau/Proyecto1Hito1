@@ -244,6 +244,78 @@ class AlmacenLogisticoTest {
     }
 
     @Test
+    void flujoCompletoRecibeEntregaPriorizaYDespachaReabastecimientos() {
+        AlmacenLogistico almacen = almacenConProductos("P-001", "P-002");
+        almacen.buscarProducto("P-002").setCantidadMinima(4);
+
+        EntregaProveedor entrega = entregaConProductos(
+                detalleConProducto("P-001", 10),
+                detalleConProducto("P-002", 5));
+        almacen.registrarEntregaProveedor(entrega);
+        assertTrue(almacen.hayEntregasPendientes());
+
+        assertSame(entrega, almacen.descargarSiguienteEntregaProveedor());
+        assertEquals(10, almacen.buscarProducto("P-001").getCantidad());
+        assertEquals(5, almacen.buscarProducto("P-002").getCantidad());
+
+        PedidoSucursal pedidoBajaPrioridad = pedidoReabastecimiento(
+                80, detalleConProducto("P-001", 3));
+        PedidoSucursal pedidoAltaPrioridad = pedidoReabastecimiento(
+                250,
+                detalleConProducto("P-001", 4),
+                detalleConProducto("P-002", 2));
+        almacen.registrarPedidoReabastecimiento(pedidoBajaPrioridad);
+        almacen.registrarPedidoReabastecimiento(pedidoAltaPrioridad);
+
+        assertSame(pedidoAltaPrioridad,
+                almacen.obtenerSiguientePedidoReabastecimiento());
+        assertSame(pedidoAltaPrioridad,
+                almacen.despacharSiguientePedidoReabastecimiento());
+        assertEquals(6, almacen.buscarProducto("P-001").getCantidad());
+        assertEquals(3, almacen.buscarProducto("P-002").getCantidad());
+
+        assertSame(pedidoBajaPrioridad,
+                almacen.despacharSiguientePedidoReabastecimiento());
+        assertEquals(3, almacen.buscarProducto("P-001").getCantidad());
+        assertFalse(almacen.hayPedidosReabastecimientoPendientes());
+
+        ListaArray<Producto> productosConStockBajo = almacen.productosConStockBajo();
+        assertEquals(1, productosConStockBajo.tamaño());
+        assertEquals("P-002", productosConStockBajo.obtener(0).getCodigo());
+    }
+
+    @Test
+    void proveedoresConEntregasPendientesNoRepiteProveedores() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+        EntregaProveedor primeraEntrega = entregaConProducto("P-001", 2);
+        EntregaProveedor segundaEntregaMismoProveedor = entregaConProducto("P-002", 3);
+        EntregaProveedor terceraEntrega = entregaConProducto("P-003", 1);
+        terceraEntrega.getProveedor().setCodigo("PROV-002");
+        terceraEntrega.getProveedor().setNombre("Segundo proveedor");
+        almacen.registrarEntregaProveedor(primeraEntrega);
+        almacen.registrarEntregaProveedor(segundaEntregaMismoProveedor);
+        almacen.registrarEntregaProveedor(terceraEntrega);
+
+        ListaArray<Proveedor> proveedores = almacen.proveedoresConEntregasPendientes();
+
+        assertEquals(2, proveedores.tamaño());
+        assertEquals("PROV-001", proveedores.obtener(0).getCodigo());
+        assertEquals("PROV-002", proveedores.obtener(1).getCodigo());
+    }
+
+    @Test
+    void productosSinStockDevuelveSoloLosProductosSinUnidades() {
+        AlmacenLogistico almacen = almacenConProductos("P-001", "P-002", "P-003");
+        almacen.aumentarStock("P-002", 5);
+
+        ListaArray<Producto> productosSinStock = almacen.productosSinStock();
+
+        assertEquals(2, productosSinStock.tamaño());
+        assertEquals("P-001", productosSinStock.obtener(0).getCodigo());
+        assertEquals("P-003", productosSinStock.obtener(1).getCodigo());
+    }
+
+    @Test
     void registrarEntregaProveedorLaAgregaALaCola() {
         AlmacenLogistico almacen = new AlmacenLogistico();
         EntregaProveedor entrega = entregaConProducto("P-001", 3);
@@ -433,9 +505,14 @@ class AlmacenLogisticoTest {
 
     private PedidoSucursal pedidoReabastecimiento(String codigoProducto, int cantidad,
             int clientesPromedio) {
+        return pedidoReabastecimiento(clientesPromedio,
+                detalleConProducto(codigoProducto, cantidad));
+    }
+
+    private PedidoSucursal pedidoReabastecimiento(int clientesPromedio,
+            DetalleProducto... detalles) {
         PedidoSucursal pedido = new PedidoSucursal();
-        pedido.setProductos(productosConDetalles(
-                detalleConProducto(codigoProducto, cantidad)));
+        pedido.setProductos(productosConDetalles(detalles));
         pedido.setSucursal(sucursalConClientes(clientesPromedio));
         pedido.setFecha(LocalDateTime.now());
         return pedido;

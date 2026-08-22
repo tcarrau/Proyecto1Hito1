@@ -120,26 +120,6 @@ public class AlmacenLogistico {
         return false;
     }
 
-    public ListaArray<Producto> productosConStockBajo() {
-        // devolver los que estén debajo de su stock mínimo
-
-        ListaArray<Producto> productosStockBajo = new ListaArray<>();
-        
-        for(int i = 0; i < productos.tamaño(); i++){
-            
-            DetalleProducto detalle = productos.obtener(i);
-            Producto actual = detalle.getProducto();
-            int cantMin = detalle.getCantidadMinima();
-            int cantActual = detalle.getCantidad();
-        
-            if (cantActual <= cantMin) {
-                productosStockBajo.agregar(actual);
-            }
-        }
-
-        return productosStockBajo;
-    }
-
     public void listarProductosYStock(){
         for(int i = 0; i < productos.tamaño(); i++){
             DetalleProducto detalle = productos.obtener(i);
@@ -236,128 +216,213 @@ public class AlmacenLogistico {
         ============================================================
 */
 
-/**
- * Registra un pedido para despachar a una sucursal.
- * La prioridad debe basarse en los clientes promedio de la sucursal.
- */
-public void registrarPedidoReabastecimiento(PedidoSucursal pedido) {
+    /**
+     * Registra un pedido para despachar a una sucursal.
+     * La prioridad debe basarse en los clientes promedio de la sucursal.
+     */
+    public void registrarPedidoReabastecimiento(PedidoSucursal pedido) {
 
-    if(pedido == null || pedido.getSucursal() == null || pedido.getProductos() == null || pedido.getFecha() == null){
-        throw new UnsupportedOperationException("El pedido no puede ser null");
-    }
-    pedido.setPrioridad(calcularPrioridadPedido(pedido));
-    pedidosPendientes.offer(pedido);
-}
-
-/**
- * Obtiene el pedido de mayor prioridad sin retirarlo de la cola.
- */
-public PedidoSucursal obtenerSiguientePedidoReabastecimiento() {
-
-    if(pedidosPendientes.isEmpty()){
-        return null;
-    }
-    return pedidosPendientes.peek();
-}
-
-/**
- * Despacha el pedido de mayor prioridad y descuenta los productos del inventario.
- * Tiene que haber la cantidad de productos necesarios si no no se hace el despacho
- */
-public PedidoSucursal despacharSiguientePedidoReabastecimiento() {
-
-    if(!hayPedidosReabastecimientoPendientes()){
-        return null;
+        if(pedido == null || pedido.getSucursal() == null || pedido.getProductos() == null || pedido.getFecha() == null){
+            throw new UnsupportedOperationException("El pedido no puede ser null");
+        }
+        pedido.setPrioridad(calcularPrioridadPedido(pedido));
+        pedidosPendientes.offer(pedido);
     }
 
-    PedidoSucursal pedidoADespachar = pedidosPendientes.peek();
-    if(!hayStockSuficienteParaPedido(pedidoADespachar)){
-        return null;
+    /**
+     * Obtiene el pedido de mayor prioridad sin retirarlo de la cola.
+     */
+    public PedidoSucursal obtenerSiguientePedidoReabastecimiento() {
+
+        if(pedidosPendientes.isEmpty()){
+            return null;
+        }
+        return pedidosPendientes.peek();
     }
 
-    actualizarStockDespacho(pedidoADespachar);
+    /**
+     * Despacha el pedido de mayor prioridad y descuenta los productos del inventario.
+     * Tiene que haber la cantidad de productos necesarios si no no se hace el despacho
+     */
+    public PedidoSucursal despacharSiguientePedidoReabastecimiento() {
 
-    return pedidosPendientes.poll();
+        if(!hayPedidosReabastecimientoPendientes()){
+            return null;
+        }
 
-}
+        PedidoSucursal pedidoADespachar = pedidosPendientes.peek();
+        if(!hayStockSuficienteParaPedido(pedidoADespachar)){
+            return null;
+        }
 
-/**
- * Indica si hay pedidos de reabastecimiento pendientes.
- */
-public boolean hayPedidosReabastecimientoPendientes() {
+        actualizarStockDespacho(pedidoADespachar);
 
-    return pedidosPendientes.isEmpty() ? false : true;
-}
+        return pedidosPendientes.poll();
 
-/**
- * Devuelve la cantidad de pedidos de reabastecimiento pendientes.
- */
-public int cantidadPedidosReabastecimientoPendientes() {
+    }
 
-    return pedidosPendientes.size();
-}
+    /**
+     * Indica si hay pedidos de reabastecimiento pendientes.
+     */
+    public boolean hayPedidosReabastecimientoPendientes() {
 
-/**
- * Calcula la prioridad de un pedido usando los clientes promedio de su sucursal.
- */
-private int calcularPrioridadPedido(PedidoSucursal pedido) {
+        return pedidosPendientes.isEmpty() ? false : true;
+    }
 
-    return pedido.getSucursal().getClientesPromedio();
+    /**
+     * Devuelve la cantidad de pedidos de reabastecimiento pendientes.
+     */
+    public int cantidadPedidosReabastecimientoPendientes() {
 
-}
+        return pedidosPendientes.size();
+    }
 
-/**
- * Verifica que exista stock suficiente para todos los productos del pedido.
- */
-private boolean hayStockSuficienteParaPedido(PedidoSucursal pedido) {
-    for(int i = 0; i < pedido.getProductos().tamaño(); i++){
-        DetalleProducto detalleActual = pedido.getProductos().obtener(i);
-        String codigo = detalleActual.getProducto().getCodigo();
-        boolean productoYaProcesado = false;
+    /**
+     * Calcula la prioridad de un pedido usando los clientes promedio de su sucursal.
+     */
+    private int calcularPrioridadPedido(PedidoSucursal pedido) {
 
-        // Evita validar más de una vez un producto que aparece repetido.
-        for (int j = 0; j < i; j++) {
-            DetalleProducto detalleAnterior = pedido.getProductos().obtener(j);
+        return pedido.getSucursal().getClientesPromedio();
 
-            if (detalleAnterior.getProducto().getCodigo().equals(codigo)) {
-                productoYaProcesado = true;
-                break;
+    }
+
+    /**
+     * Verifica que exista stock suficiente para todos los productos del pedido.
+     */
+    private boolean hayStockSuficienteParaPedido(PedidoSucursal pedido) {
+        for(int i = 0; i < pedido.getProductos().tamaño(); i++){
+            DetalleProducto detalleActual = pedido.getProductos().obtener(i);
+            String codigo = detalleActual.getProducto().getCodigo();
+            boolean productoYaProcesado = false;
+
+            // Evita validar más de una vez un producto que aparece repetido.
+            for (int j = 0; j < i; j++) {
+                DetalleProducto detalleAnterior = pedido.getProductos().obtener(j);
+
+                if (detalleAnterior.getProducto().getCodigo().equals(codigo)) {
+                    productoYaProcesado = true;
+                    break;
+                }
+            }
+
+            if (productoYaProcesado) {
+                continue;
+            }
+
+            int cantidadTotalSolicitada = 0;
+
+            // Suma todas las líneas del pedido que corresponden al mismo producto.
+            for (int j = i; j < pedido.getProductos().tamaño(); j++) {
+                DetalleProducto detalle = pedido.getProductos().obtener(j);
+
+                if (detalle.getProducto().getCodigo().equals(codigo)) {
+                    cantidadTotalSolicitada += detalle.getCantidad();
+                }
+            }
+
+            boolean hayCantNecesaria = hayCantNecesarias(codigo, cantidadTotalSolicitada);
+
+            if(!hayCantNecesaria){
+                return false;
             }
         }
 
-        if (productoYaProcesado) {
-            continue;
+        return true;
+    }
+
+    /**
+     * Descuenta del inventario los productos incluidos en un pedido despachado.
+     */
+    private void actualizarStockDespacho(PedidoSucursal pedido) {
+
+        for(int i = 0; i < pedido.getProductos().tamaño(); i++){
+            disminuirStock(pedido.getProductos().obtener(i).getProducto().getCodigo(), pedido.getProductos().obtener(i).getCantidad());
+        }
+    }
+
+
+    /*
+            ==================================
+            ========== Consultas =============
+            ==================================
+    */
+
+    //1
+    public int cantidadInventarioTotal(){
+        
+        int suma = 0;
+
+        for(int i = 0; i < productos.tamaño(); i++){
+            suma += productos.obtener(i).getCantidad();
         }
 
-        int cantidadTotalSolicitada = 0;
+        return suma;
+    }
 
-        // Suma todas las líneas del pedido que corresponden al mismo producto.
-        for (int j = i; j < pedido.getProductos().tamaño(); j++) {
-            DetalleProducto detalle = pedido.getProductos().obtener(j);
+    //2
+    public ListaArray<Producto> productosConStockBajo() {
+        // devolver los que estén debajo de su stock mínimo
 
-            if (detalle.getProducto().getCodigo().equals(codigo)) {
-                cantidadTotalSolicitada += detalle.getCantidad();
+        ListaArray<Producto> productosStockBajo = new ListaArray<>();
+        
+        for(int i = 0; i < productos.tamaño(); i++){
+            
+            DetalleProducto detalle = productos.obtener(i);
+            Producto actual = detalle.getProducto();
+            int cantMin = detalle.getCantidadMinima();
+            int cantActual = detalle.getCantidad();
+        
+            if (cantActual <= cantMin) {
+                productosStockBajo.agregar(actual);
             }
         }
 
-        boolean hayCantNecesaria = hayCantNecesarias(codigo, cantidadTotalSolicitada);
+        return productosStockBajo;
+    }
+    
+    //3
+    public int obtenerStockProducto(String codigo){
+        return buscarProducto(codigo).getCantidad();
+    }
 
-        if(!hayCantNecesaria){
-            return false;
+
+    //4
+    public ListaArray<Proveedor> proveedoresConEntregasPendientes(){
+        ListaArray<Proveedor> proveedoresPendientes = new ListaArray<>();
+
+        for (int i = 0; i < esperaProveedores.tamaño(); i++) {
+            Proveedor proveedor = esperaProveedores.obtener(i).getProveedor();
+            boolean yaAgregado = false;
+
+            for (int j = 0; j < proveedoresPendientes.tamaño(); j++) {
+                Proveedor proveedorAgregado = proveedoresPendientes.obtener(j);
+
+                if (proveedorAgregado.getCodigo().equals(proveedor.getCodigo())) {
+                    yaAgregado = true;
+                    break;
+                }
+            }
+
+            if (!yaAgregado) {
+                proveedoresPendientes.agregar(proveedor);
+            }
         }
+
+        return proveedoresPendientes;
     }
 
-    return true;
-}
+    //5
+    public ListaArray<Producto> productosSinStock() {
+        ListaArray<Producto> productosSinStock = new ListaArray<>();
 
-/**
- * Descuenta del inventario los productos incluidos en un pedido despachado.
- */
-private void actualizarStockDespacho(PedidoSucursal pedido) {
+        for (int i = 0; i < productos.tamaño(); i++) {
+            DetalleProducto detalle = productos.obtener(i);
 
-    for(int i = 0; i < pedido.getProductos().tamaño(); i++){
-        disminuirStock(pedido.getProductos().obtener(i).getProducto().getCodigo(), pedido.getProductos().obtener(i).getCantidad());
+            if (detalle.getCantidad() == 0) {
+                productosSinStock.agregar(detalle.getProducto());
+            }
+        }
+
+        return productosSinStock;
     }
-}
-
 }
