@@ -441,6 +441,108 @@ class AlmacenLogisticoTest {
         assertEquals(15, almacen.cantidadEntregasPendientes());
     }
 
+    /*
+        ==================================
+        ========== Terminales ============
+        ==================================
+    */
+
+    @Test
+    void constructorConCantidadDeTerminalesLasCreaTodasHabilitadasYLibres() {
+        AlmacenLogistico almacen = new AlmacenLogistico(3);
+
+        assertEquals(3, almacen.terminalesLibres().tamaño());
+        assertEquals(0, almacen.terminalesOcupadas().tamaño());
+    }
+
+    @Test
+    void constructorSinArgumentosCreaUnaSolaTerminal() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+
+        assertEquals(1, almacen.terminalesLibres().tamaño());
+    }
+
+    @Test
+    void asignarYLiberarTerminalCargaSeReflejaEnLasConsultasDeVisibilidad() {
+        AlmacenLogistico almacen = new AlmacenLogistico(2);
+
+        TerminalCarga terminal = almacen.asignarTerminalCarga(OperacionCarga.CARGANDO_SUCURSAL);
+
+        assertNotNull(terminal);
+        assertEquals(OperacionCarga.CARGANDO_SUCURSAL, terminal.getOperacionActual());
+        assertEquals(1, almacen.terminalesLibres().tamaño());
+        assertEquals(1, almacen.terminalesOcupadas().tamaño());
+
+        almacen.liberarTerminalCarga(terminal);
+
+        assertEquals(2, almacen.terminalesLibres().tamaño());
+        assertEquals(0, almacen.terminalesOcupadas().tamaño());
+    }
+
+    @Test
+    void asignarTerminalCargaDevuelveNullSinTerminalesDisponibles() {
+        AlmacenLogistico almacen = new AlmacenLogistico(0);
+
+        assertNull(almacen.asignarTerminalCarga(OperacionCarga.DESCARGANDO_PROVEEDOR));
+    }
+
+    @Test
+    void liberarTerminalCargaConNullLanzaExcepcion() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> almacen.liberarTerminalCarga(null));
+    }
+
+    @Test
+    void descargarSiguienteEntregaProveedorEsperaSiNoHayTerminalLibre() {
+        AlmacenLogistico almacen = new AlmacenLogistico(0);
+        almacen.registrarProducto(productoConCodigo("P-001"));
+        almacen.registrarEntregaProveedor(entregaConProducto("P-001", 5));
+
+        EntregaProveedor entregaDescargada = almacen.descargarSiguienteEntregaProveedor();
+
+        assertNull(entregaDescargada);
+        assertEquals(1, almacen.cantidadEntregasPendientes());
+        assertEquals(0, almacen.buscarProducto("P-001").getCantidad());
+    }
+
+    @Test
+    void despacharSiguientePedidoReabastecimientoEsperaSiNoHayTerminalLibre() {
+        AlmacenLogistico almacen = new AlmacenLogistico(0);
+        almacen.registrarProducto(productoConCodigo("P-001"));
+        almacen.aumentarStock("P-001", 10);
+        almacen.registrarPedidoReabastecimiento(pedidoReabastecimiento("P-001", 3, 100));
+
+        PedidoSucursal pedidoDespachado = almacen.despacharSiguientePedidoReabastecimiento();
+
+        assertNull(pedidoDespachado);
+        assertEquals(1, almacen.cantidadPedidosReabastecimientoPendientes());
+        assertEquals(10, almacen.buscarProducto("P-001").getCantidad());
+    }
+
+    @Test
+    void deshabilitarUnaTerminalImpideQueSeLeAsigneAunEstandoLibre() {
+        AlmacenLogistico almacen = new AlmacenLogistico(1);
+        int id = almacen.terminalesLibres().obtener(0).getId();
+
+        almacen.deshabilitarTerminal(id);
+        assertNull(almacen.asignarTerminalCarga(OperacionCarga.CARGANDO_SUCURSAL));
+
+        almacen.habilitarTerminal(id);
+        assertNotNull(almacen.asignarTerminalCarga(OperacionCarga.CARGANDO_SUCURSAL));
+    }
+
+    @Test
+    void habilitarYDeshabilitarTerminalConIdInexistenteLanzanExcepcion() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+
+        assertThrows(IllegalArgumentException.class,
+                () -> almacen.deshabilitarTerminal(999));
+        assertThrows(IllegalArgumentException.class,
+                () -> almacen.habilitarTerminal(999));
+    }
+
     private AlmacenLogistico almacenConProducto(String codigo) {
         AlmacenLogistico almacen = new AlmacenLogistico();
         almacen.registrarProducto(productoConCodigo(codigo));
