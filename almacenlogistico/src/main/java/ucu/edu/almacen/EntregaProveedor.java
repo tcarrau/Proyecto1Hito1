@@ -31,4 +31,10 @@ public class EntregaProveedor {
     public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
+
+    @Override
+    public String toString() {
+        return "EntregaProveedor{proveedor=" + proveedor + ", productos=" + productos
+                + ", fecha=" + fecha + "}";
+    }
 }

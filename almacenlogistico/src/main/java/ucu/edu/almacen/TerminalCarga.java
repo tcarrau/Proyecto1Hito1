@@ -38,4 +38,10 @@ public class TerminalCarga {
     public boolean estaLibre() {
         return habilitada && operacionActual == OperacionCarga.LIBRE;
     }
+
+    @Override
+    public String toString() {
+        return "TerminalCarga{id=" + id + ", habilitada=" + habilitada
+                + ", operacionActual=" + operacionActual + "}";
+    }
 }

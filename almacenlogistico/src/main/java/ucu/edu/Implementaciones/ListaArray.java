@@ -163,4 +163,18 @@ public class ListaArray<T> implements TDALista<T> {
         }
         proximo = 0;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder resultado = new StringBuilder("[");
+
+        for (int i = 0; i < proximo; i++) {
+            if (i > 0) {
+                resultado.append(", ");
+            }
+            resultado.append(lista[i]);
+        }
+
+        return resultado.append("]").toString();
+    }
 }

@@ -40,4 +40,10 @@ public class PedidoSucursal {
         this.sucursal = sucursal;
     }
 
+    @Override
+    public String toString() {
+        return "PedidoSucursal{prioridad=" + prioridad + ", \nproductos=" + productos
+                + ", \nfecha=" + fecha + ", \nsucursal=" + sucursal + "}";
+    }
+
 }
