@@ -505,7 +505,13 @@ class AlmacenLogisticoTest {
         assertEquals(2, almacen.obtenerTerminales().tamaño());
         assertTrue(almacen.buscarTerminal(1).estaLibre());
         assertTrue(almacen.buscarTerminal(2).estaLibre());
-   
+    }
+
+    /*
+        ==================================
+        ========== Terminales ============
+        ==================================
+    */
 
     private AlmacenLogistico almacenConProducto(String codigo) {
         AlmacenLogistico almacen = new AlmacenLogistico();
