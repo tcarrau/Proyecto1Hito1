@@ -11,7 +11,7 @@ import java.util.Comparator;
 import org.junit.jupiter.api.Test;
 
 import ucu.edu.aed.tda.TDALista;
-import ucu.edu.Implementaciones.ListaCircularDoble;
+import ucu.edu.implementaciones.ListaCircularDoble;
 
 class ListaCircularDobleTest {
 

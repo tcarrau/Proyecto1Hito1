@@ -12,34 +12,40 @@ public class AlmacenLogistico {
     private PriorityQueue<PedidoSucursal> pedidosPendientes;
     private Cola<EntregaProveedor> esperaProveedores;
 
-
     public AlmacenLogistico() {
+        this(1);
+    }
+
+    public AlmacenLogistico(int cantidadTerminales) {
         this.productos = new ListaArray<>();
         this.terminales = new ListaArray<>();
         this.esperaProveedores = new Cola<>(15);
-        this.pedidosPendientes = new PriorityQueue<>((pedido1, pedido2) -> Integer.compare(pedido2.getPrioridad(), pedido1.getPrioridad()));
+        this.pedidosPendientes = new PriorityQueue<>(
+                (pedido1, pedido2) -> Integer.compare(pedido2.getPrioridad(), pedido1.getPrioridad()));
 
+        for (int i = 0; i < cantidadTerminales; i++) {
+            TerminalCarga terminal = new TerminalCarga(i + 1);
+            terminales.agregar(terminal);
+        }
     }
 
-/*
-        ==================================
-        ====== Cosas con inventario ======
-        ==================================
-*/
-
+    /*
+     * ==================================
+     * ====== Cosas con inventario ======
+     * ==================================
+     */
 
     public void registrarProducto(Producto producto) {
         // validar que no exista y agregarlo al inventario
         if (producto == null || producto.getCodigo() == null
-                 || producto.getCodigo().isBlank()) {
-             throw new IllegalArgumentException("El producto debe tener un código");
+                || producto.getCodigo().isBlank()) {
+            throw new IllegalArgumentException("El producto debe tener un código");
         }
 
         if (buscarProducto(producto.getCodigo()) != null) {
-           return;
-         }
+            return;
+        }
 
-        
         DetalleProducto nuevoProducto = new DetalleProducto();
         nuevoProducto.setProducto(producto);
         nuevoProducto.setCantidad(0);
@@ -55,10 +61,10 @@ public class AlmacenLogistico {
             return null;
         }
 
-        for(int i = 0; i < productos.tamaño(); i++){
+        for (int i = 0; i < productos.tamaño(); i++) {
             DetalleProducto detalle = productos.obtener(i);
             Producto actual = detalle.getProducto();
-            if(actual.getCodigo().equals(codigo)){
+            if (actual.getCodigo().equals(codigo)) {
                 return detalle;
             }
         }
@@ -102,7 +108,7 @@ public class AlmacenLogistico {
         return false;
     }
 
-    public boolean hayCantNecesarias(String codigo, int cantidad){
+    public boolean hayCantNecesarias(String codigo, int cantidad) {
         if (cantidad <= 0) {
             return false;
         }
@@ -120,27 +126,26 @@ public class AlmacenLogistico {
         return false;
     }
 
-    public void listarProductosYStock(){
-        for(int i = 0; i < productos.tamaño(); i++){
+    public void listarProductosYStock() {
+        for (int i = 0; i < productos.tamaño(); i++) {
             DetalleProducto detalle = productos.obtener(i);
             System.out.println(detalle.toString());
         }
     }
 
+    /*
+     * ==============================================
+     * ====== Cosas con entrega de proveedores ======
+     * ==============================================
+     */
 
     /*
-            ==============================================
-            ====== Cosas con entrega de proveedores ======
-            ==============================================
-    */
-
-    /*
-     Registra una entrega de proveedor en la cola de espera.
+     * Registra una entrega de proveedor en la cola de espera.
      */
     public void registrarEntregaProveedor(EntregaProveedor entrega) {
         // validar y encolar la entrega.
 
-        if(entrega == null){
+        if (entrega == null) {
             throw new UnsupportedOperationException("no se puede agregar una entrega vacia");
         }
 
@@ -150,9 +155,8 @@ public class AlmacenLogistico {
             throw new UnsupportedOperationException("Alguno de los datos de la entrega no es valido");
         }
 
-
         esperaProveedores.poneEnCola(entrega);
-        
+
     }
 
     /**
@@ -171,11 +175,24 @@ public class AlmacenLogistico {
      * Descarga la próxima entrega pendiente y actualiza el stock.
      */
     public EntregaProveedor descargarSiguienteEntregaProveedor() {
-        //  desencolar la entrega y actualizar el inventario.
-        EntregaProveedor entrega = esperaProveedores.quitaDeCola();
+        EntregaProveedor entrega = obtenerSiguienteEntregaProveedor();
+
+        TerminalCarga terminal = asignarTerminalCarga(OperacionCarga.DESCARGANDO_PROVEEDOR);
+
+        if (terminal == null) {
+            return null;
+
+        }
+        // desencolar la entrega y actualizar el inventario.
+        esperaProveedores.quitaDeCola();
         actualizarStockEntrega(entrega);
+
+        liberarTerminalCarga(terminal);
+
         return entrega;
+
     }
+
 
     /**
      * Indica si existen entregas de proveedores pendientes.
@@ -189,11 +206,10 @@ public class AlmacenLogistico {
      * Devuelve la cantidad de entregas de proveedores pendientes.
      */
     public int cantidadEntregasPendientes() {
-        //  obtener la cantidad de elementos de la cola.
+        // obtener la cantidad de elementos de la cola.
         if (esperaProveedores == null) {
             return 0;
-        }
-        else {
+        } else {
             return esperaProveedores.tamaño();
         }
     }
@@ -203,18 +219,17 @@ public class AlmacenLogistico {
      */
     private void actualizarStockEntrega(EntregaProveedor entrega) {
 
-        for(int i = 0; i < entrega.getProductos().tamaño(); i++){
+        for (int i = 0; i < entrega.getProductos().tamaño(); i++) {
             DetalleProducto detalle = entrega.getProductos().obtener(i);
             aumentarStock(detalle.getProducto().getCodigo(), detalle.getCantidad());
         }
     }
-    
 
-/*
-        ============================================================
-        ============= Reabastecimientos de sucursales ==============
-        ============================================================
-*/
+    /*
+     * ============================================================
+     * ============= Reabastecimientos de sucursales ==============
+     * ============================================================
+     */
 
     /**
      * Registra un pedido para despachar a una sucursal.
@@ -222,7 +237,8 @@ public class AlmacenLogistico {
      */
     public void registrarPedidoReabastecimiento(PedidoSucursal pedido) {
 
-        if(pedido == null || pedido.getSucursal() == null || pedido.getProductos() == null || pedido.getFecha() == null){
+        if (pedido == null || pedido.getSucursal() == null || pedido.getProductos() == null
+                || pedido.getFecha() == null) {
             throw new UnsupportedOperationException("El pedido no puede ser null");
         }
         pedido.setPrioridad(calcularPrioridadPedido(pedido));
@@ -234,31 +250,42 @@ public class AlmacenLogistico {
      */
     public PedidoSucursal obtenerSiguientePedidoReabastecimiento() {
 
-        if(pedidosPendientes.isEmpty()){
+        if (pedidosPendientes.isEmpty()) {
             return null;
         }
         return pedidosPendientes.peek();
     }
 
     /**
-     * Despacha el pedido de mayor prioridad y descuenta los productos del inventario.
-     * Tiene que haber la cantidad de productos necesarios si no no se hace el despacho
+     * Despacha el pedido de mayor prioridad y descuenta los productos del
+     * inventario.
+     * Tiene que haber la cantidad de productos necesarios si no no se hace el
+     * despacho
      */
     public PedidoSucursal despacharSiguientePedidoReabastecimiento() {
 
-        if(!hayPedidosReabastecimientoPendientes()){
+        if (!hayPedidosReabastecimientoPendientes()) {
             return null;
         }
 
         PedidoSucursal pedidoADespachar = pedidosPendientes.peek();
-        if(!hayStockSuficienteParaPedido(pedidoADespachar)){
+        if (!hayStockSuficienteParaPedido(pedidoADespachar)) {
+            return null;
+        }
+
+        TerminalCarga terminal = asignarTerminalCarga(OperacionCarga.CARGANDO_SUCURSAL);
+
+        if (terminal == null) {
             return null;
         }
 
         actualizarStockDespacho(pedidoADespachar);
 
-        return pedidosPendientes.poll();
+        PedidoSucursal pedido = pedidosPendientes.poll();
 
+        liberarTerminalCarga(terminal);
+
+        return pedido;
     }
 
     /**
@@ -278,7 +305,8 @@ public class AlmacenLogistico {
     }
 
     /**
-     * Calcula la prioridad de un pedido usando los clientes promedio de su sucursal.
+     * Calcula la prioridad de un pedido usando los clientes promedio de su
+     * sucursal.
      */
     private int calcularPrioridadPedido(PedidoSucursal pedido) {
 
@@ -290,7 +318,7 @@ public class AlmacenLogistico {
      * Verifica que exista stock suficiente para todos los productos del pedido.
      */
     private boolean hayStockSuficienteParaPedido(PedidoSucursal pedido) {
-        for(int i = 0; i < pedido.getProductos().tamaño(); i++){
+        for (int i = 0; i < pedido.getProductos().tamaño(); i++) {
             DetalleProducto detalleActual = pedido.getProductos().obtener(i);
             String codigo = detalleActual.getProducto().getCodigo();
             boolean productoYaProcesado = false;
@@ -322,7 +350,7 @@ public class AlmacenLogistico {
 
             boolean hayCantNecesaria = hayCantNecesarias(codigo, cantidadTotalSolicitada);
 
-            if(!hayCantNecesaria){
+            if (!hayCantNecesaria) {
                 return false;
             }
         }
@@ -335,43 +363,43 @@ public class AlmacenLogistico {
      */
     private void actualizarStockDespacho(PedidoSucursal pedido) {
 
-        for(int i = 0; i < pedido.getProductos().tamaño(); i++){
-            disminuirStock(pedido.getProductos().obtener(i).getProducto().getCodigo(), pedido.getProductos().obtener(i).getCantidad());
+        for (int i = 0; i < pedido.getProductos().tamaño(); i++) {
+            disminuirStock(pedido.getProductos().obtener(i).getProducto().getCodigo(),
+                    pedido.getProductos().obtener(i).getCantidad());
         }
     }
 
-
     /*
-            ==================================
-            ========== Consultas =============
-            ==================================
-    */
+     * ==================================
+     * ========== Consultas =============
+     * ==================================
+     */
 
-    //1
-    public int cantidadInventarioTotal(){
-        
+    // 1
+    public int cantidadInventarioTotal() {
+
         int suma = 0;
 
-        for(int i = 0; i < productos.tamaño(); i++){
+        for (int i = 0; i < productos.tamaño(); i++) {
             suma += productos.obtener(i).getCantidad();
         }
 
         return suma;
     }
 
-    //2
+    // 2
     public ListaArray<Producto> productosConStockBajo() {
         // devolver los que estén debajo de su stock mínimo
 
         ListaArray<Producto> productosStockBajo = new ListaArray<>();
-        
-        for(int i = 0; i < productos.tamaño(); i++){
-            
+
+        for (int i = 0; i < productos.tamaño(); i++) {
+
             DetalleProducto detalle = productos.obtener(i);
             Producto actual = detalle.getProducto();
             int cantMin = detalle.getCantidadMinima();
             int cantActual = detalle.getCantidad();
-        
+
             if (cantActual <= cantMin) {
                 productosStockBajo.agregar(actual);
             }
@@ -379,15 +407,14 @@ public class AlmacenLogistico {
 
         return productosStockBajo;
     }
-    
-    //3
-    public int obtenerStockProducto(String codigo){
+
+    // 3
+    public int obtenerStockProducto(String codigo) {
         return buscarProducto(codigo).getCantidad();
     }
 
-
-    //4
-    public ListaArray<Proveedor> proveedoresConEntregasPendientes(){
+    // 4
+    public ListaArray<Proveedor> proveedoresConEntregasPendientes() {
         ListaArray<Proveedor> proveedoresPendientes = new ListaArray<>();
 
         for (int i = 0; i < esperaProveedores.tamaño(); i++) {
@@ -411,7 +438,7 @@ public class AlmacenLogistico {
         return proveedoresPendientes;
     }
 
-    //5
+    // 5
     public ListaArray<Producto> productosSinStock() {
         ListaArray<Producto> productosSinStock = new ListaArray<>();
 
@@ -424,5 +451,87 @@ public class AlmacenLogistico {
         }
 
         return productosSinStock;
+    }
+
+    /*
+     * ============================================================
+     * ============= Terminales ==============
+     * ============================================================
+     */
+
+    private TerminalCarga buscarTerminalDisponible() {
+
+        for (int i = 0; i < terminales.tamaño(); i++) {
+            TerminalCarga terminal = terminales.obtener(i);
+            if (terminal.estaLibre()) {
+                return terminal;
+            }
+        }
+
+        return null;
+    }
+
+    public TerminalCarga asignarTerminalCarga(OperacionCarga operacion) {
+        TerminalCarga terminal = buscarTerminalDisponible();
+        if (terminal == null) {
+            return null;
+        }
+        terminal.setOperacionActual(operacion);
+        return terminal;
+    }
+
+    public void liberarTerminalCarga(TerminalCarga terminal) {
+        if (terminal == null) {
+            throw new IllegalArgumentException("La terminal no puede ser null");
+        }
+        terminal.setOperacionActual(OperacionCarga.LIBRE);
+    }
+
+    public ListaArray<TerminalCarga> terminalesLibres() {
+        ListaArray<TerminalCarga> libres = new ListaArray<>();
+        for (int i = 0; i < terminales.tamaño(); i++) {
+            TerminalCarga terminal = terminales.obtener(i);
+            if (terminal.estaLibre()) {
+                libres.agregar(terminal);
+            }
+        }
+        return libres;
+    }
+
+    public ListaArray<TerminalCarga> terminalesOcupadas() {
+        ListaArray<TerminalCarga> ocupadas = new ListaArray<>();
+        for (int i = 0; i < terminales.tamaño(); i++) {
+            TerminalCarga terminal = terminales.obtener(i);
+            if (!terminal.estaLibre()) {
+                ocupadas.agregar(terminal);
+            }
+        }
+        return ocupadas;
+    }
+
+    private TerminalCarga buscarTerminalPorId(int id) {
+        for (int i = 0; i < terminales.tamaño(); i++) {
+            TerminalCarga terminal = terminales.obtener(i);
+            if (terminal.getId() == id) {
+                return terminal;
+            }
+        }
+        return null;
+    }
+
+    public void deshabilitarTerminal(int id) {
+        TerminalCarga terminal = buscarTerminalPorId(id);
+        if (terminal == null) {
+            throw new IllegalArgumentException("No existe una terminal con ese ID");
+        }
+        terminal.setHabilitada(false);
+    }
+
+    public void habilitarTerminal(int id) {
+        TerminalCarga terminal = buscarTerminalPorId(id);
+        if (terminal == null) {
+            throw new IllegalArgumentException("No existe una terminal con ese ID");
+        }
+        terminal.setHabilitada(true);
     }
 }
