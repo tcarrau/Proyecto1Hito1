@@ -198,6 +198,21 @@ class AlmacenLogisticoTest {
     }
 
     @Test
+    void pedidosConMismaPrioridadDaPreferenciaAlMasAntiguo() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+        PedidoSucursal pedidoReciente = pedidoReabastecimiento("P-001", 1, 100);
+        PedidoSucursal pedidoAntiguo = pedidoReabastecimiento("P-002", 1, 100);
+        pedidoReciente.setFecha(LocalDateTime.now());
+        pedidoAntiguo.setFecha(LocalDateTime.now().minusMinutes(10));
+
+        almacen.registrarPedidoReabastecimiento(pedidoReciente);
+        almacen.registrarPedidoReabastecimiento(pedidoAntiguo);
+
+        assertSame(pedidoAntiguo,
+                almacen.obtenerSiguientePedidoReabastecimiento());
+    }
+
+    @Test
     void despacharPedidoReabastecimientoDescuentaStockYLoQuitaDeLaCola() {
         AlmacenLogistico almacen = almacenConProducto("P-001");
         almacen.aumentarStock("P-001", 10);
