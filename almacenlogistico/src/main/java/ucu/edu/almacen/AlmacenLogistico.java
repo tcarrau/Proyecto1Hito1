@@ -1,16 +1,16 @@
 package ucu.edu.almacen;
 
 import java.util.NoSuchElementException;
-import java.util.PriorityQueue;
 import java.time.LocalDateTime;
 
 import ucu.edu.implementaciones.Cola;
 import ucu.edu.implementaciones.ListaArray;
+import ucu.edu.implementaciones.ColaPrioridad;
 
 public class AlmacenLogistico {
     private ListaArray<DetalleProducto> productos;
     private ListaArray<TerminalCarga> terminales;
-    private PriorityQueue<PedidoSucursal> pedidosPendientes;
+    private ColaPrioridad<PedidoSucursal> pedidosPendientes;
     private Cola<EntregaProveedor> esperaProveedores;
 
 
@@ -26,7 +26,16 @@ public class AlmacenLogistico {
         this.productos = new ListaArray<>();
         this.terminales = new ListaArray<>();
         this.esperaProveedores = new Cola<>(15);
-        this.pedidosPendientes = new PriorityQueue<>((pedido1, pedido2) -> Integer.compare(pedido2.getPrioridad(), pedido1.getPrioridad()));
+        this.pedidosPendientes = new ColaPrioridad<>((pedido1, pedido2) -> {
+            int comparacionPrioridad = Integer.compare(
+                    pedido2.getPrioridad(), pedido1.getPrioridad());
+
+            if (comparacionPrioridad != 0) {
+                return comparacionPrioridad;
+            }
+
+            return pedido1.getFecha().compareTo(pedido2.getFecha());
+        });
 
         if (cargarDatosBase) {
             cargarDatosBase();
@@ -385,7 +394,7 @@ public class AlmacenLogistico {
             throw new UnsupportedOperationException("El pedido no puede ser null");
         }
         pedido.setPrioridad(calcularPrioridadPedido(pedido));
-        pedidosPendientes.offer(pedido);
+        pedidosPendientes.poneEnCola(pedido);
     }
 
     /**
@@ -393,10 +402,10 @@ public class AlmacenLogistico {
      */
     public PedidoSucursal obtenerSiguientePedidoReabastecimiento() {
 
-        if(pedidosPendientes.isEmpty()){
+        if(pedidosPendientes.esVacio()){
             return null;
         }
-        return pedidosPendientes.peek();
+        return pedidosPendientes.frente();
     }
 
     /**
@@ -409,14 +418,14 @@ public class AlmacenLogistico {
             return null;
         }
 
-        PedidoSucursal pedidoADespachar = pedidosPendientes.peek();
+        PedidoSucursal pedidoADespachar = pedidosPendientes.frente();
         if(!hayStockSuficienteParaPedido(pedidoADespachar)){
             return null;
         }
 
         actualizarStockDespacho(pedidoADespachar);
 
-        return pedidosPendientes.poll();
+        return pedidosPendientes.quitaDeCola();
 
     }
 
@@ -425,7 +434,7 @@ public class AlmacenLogistico {
      */
     public boolean hayPedidosReabastecimientoPendientes() {
 
-        return pedidosPendientes.isEmpty() ? false : true;
+        return pedidosPendientes.esVacio() ? false : true;
     }
 
     /**
@@ -433,7 +442,7 @@ public class AlmacenLogistico {
      */
     public int cantidadPedidosReabastecimientoPendientes() {
 
-        return pedidosPendientes.size();
+        return pedidosPendientes.tamaño();
     }
 
     /**
