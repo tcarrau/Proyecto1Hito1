@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 
 import ucu.edu.implementaciones.Cola;
 import ucu.edu.implementaciones.ListaArray;
-import ucu.edu.implementaciones.ColaPrioridad;
+import ucu.edu.implementaciones.ColaPrioridadDobleEnlazada;
 
 public class AlmacenLogistico {
     private ListaArray<DetalleProducto> productos;
     private ListaArray<TerminalCarga> terminales;
-    private ColaPrioridad<PedidoSucursal> pedidosPendientes;
+    private ColaPrioridadDobleEnlazada<PedidoSucursal> pedidosPendientes; //esta fue la optimizacion
     private Cola<EntregaProveedor> esperaProveedores;
 
 
@@ -26,7 +26,7 @@ public class AlmacenLogistico {
         this.productos = new ListaArray<>();
         this.terminales = new ListaArray<>();
         this.esperaProveedores = new Cola<>(15);
-        this.pedidosPendientes = new ColaPrioridad<>((pedido1, pedido2) -> {
+        this.pedidosPendientes = new ColaPrioridadDobleEnlazada<>((pedido1, pedido2) -> {
             int comparacionPrioridad = Integer.compare(
                     pedido2.getPrioridad(), pedido1.getPrioridad());
 

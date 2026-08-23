@@ -86,6 +86,40 @@ public class ListaDoblementeEnlazada<T> implements TDALista<T> {
         tamaño++;
     }
 
+    /**
+     * Inserta un elemento antes del primer elemento mayor según el comparador.
+     * Los elementos equivalentes permanecen antes que el nuevo, por lo que la
+     * inserción es estable. Es de visibilidad de paquete porque sirve como
+     * operación interna de la cola de prioridad enlazada.
+     */
+    void agregarOrdenado(T elem, Comparator<? super T> comparador) {
+        Nodo<T> actual = primero;
+
+        while (actual != null && comparador.compare(actual.dato, elem) <= 0) {
+            actual = actual.siguiente;
+        }
+
+        if (actual == null) {
+            agregar(elem);
+            return;
+        }
+
+        Nodo<T> nuevo = new Nodo<>(elem);
+        Nodo<T> anterior = actual.anterior;
+
+        nuevo.anterior = anterior;
+        nuevo.siguiente = actual;
+        actual.anterior = nuevo;
+
+        if (anterior == null) {
+            primero = nuevo;
+        } else {
+            anterior.siguiente = nuevo;
+        }
+
+        tamaño++;
+    }
+
     @Override
     public T obtener(int index) {
         validarIndice(index);
