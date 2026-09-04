@@ -18,6 +18,7 @@ import ucu.edu.aed.tda.TDANodoNario;
 public class NodoNario<T> implements TDANodoNario<T> {
 
     private T dato;
+    private NodoNario<T> padre;
     private final ListaArray<NodoNario<T>> hijos = new ListaArray<>();
 
     public NodoNario(T dato) {
@@ -32,6 +33,11 @@ public class NodoNario<T> implements TDANodoNario<T> {
     @Override
     public void setDato(T dato) {
         this.dato = dato;
+    }
+
+    /** Devuelve el padre del nodo, o {@code null} si es la raíz. */
+    public NodoNario<T> getPadre() {
+        return padre;
     }
 
     @Override
@@ -51,6 +57,7 @@ public class NodoNario<T> implements TDANodoNario<T> {
 
     /** Agrega {@code hijo} al final de la lista de hijos directos. */
     void agregarHijoDirecto(NodoNario<T> hijo) {
+        hijo.padre = this;
         hijos.agregar(hijo);
     }
 
@@ -63,6 +70,7 @@ public class NodoNario<T> implements TDANodoNario<T> {
         for (int i = 0; i < hijos.tamaño(); i++) {
             if (hijos.obtener(i) == hijo) {
                 hijos.remover(i);
+                hijo.padre = null;
                 return true;
             }
         }
