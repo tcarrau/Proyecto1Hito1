@@ -1,5 +1,7 @@
+/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAArbolBinario.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDACola.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAConjunto.java
+/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAElemento.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDALista.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAPila.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/AlmacenLogistico.java
@@ -11,14 +13,18 @@
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/Proveedor.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/Sucursal.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/TerminalCarga.java
+/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ABB.java
+/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ArbolBinario.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/Cola.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ColaPrioridad.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ColaPrioridadDobleEnlazada.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/Conjunto.java
+/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/Elemento.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaArray.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaCircularDoble.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaCircularSimple.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaDoblementeEnlazada.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaSimplementeEnlazada.java
+/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/MonticuloBinario.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/Pila.java
 /Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/uy/Main.java
