@@ -322,7 +322,70 @@ public class AlmacenLogistico {
         }
     }
 
+    /*
+    HITO2 INVENTARIO
+    */
+    public void registrarProducto(Producto producto, StockUbicado ubicacion) {
+        if (producto == null || producto.getCodigo() == null
+                || producto.getCodigo().isBlank()) {
+            throw new IllegalArgumentException("El producto debe tener un código");
+        }
+  
+        if (ubicacion == null) {
+            throw new IllegalArgumentException("La ubicación no puede ser null");
+        }
+  
+        RegistroInventario criterio = new RegistroInventario(producto);
+  
+        if (inventario.buscar(criterio) != null) {
+            return;
+        }
+  
+        RegistroInventario nuevoRegistro = new RegistroInventario(producto);
+        nuevoRegistro.getUbicaciones().agregar(ubicacion);
+  
+        inventario.insertar(nuevoRegistro);
+    }
 
+    public RegistroInventario buscarProductoInventario(String codigo) {
+        // recorrer inventario y encontrarlo
+
+        if (codigo == null || codigo.isBlank()) {
+            return null;
+        }
+       
+       RegistroInventario registroBuscar = new RegistroInventario();
+       Producto p = new Producto();
+       p.setCodigo(codigo);
+       registroBuscar.setProducto(p);
+       
+
+        return inventario.buscar(registroBuscar);
+    }
+
+    public void aumentarStockRegistro(String codigo, int cantidad, Sector sector) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
+        }
+        if (sector == null) {
+            throw new IllegalArgumentException("El sector no puede ser null");
+        }
+
+        RegistroInventario registro = buscarProductoInventario(codigo);
+
+        if (registro == null) {
+            throw new IllegalArgumentException("No existe un producto con ese código");
+        }
+
+        StockUbicado stockUbicado = registro.getStockUbicado(sector);
+
+        if (stockUbicado == null) {
+            registro.getUbicaciones().agregar(new StockUbicado(sector, cantidad));
+            return;
+        }
+
+        stockUbicado.setCantidad(stockUbicado.getCantidad() + cantidad);
+    }
     /*
             ==============================================
             ====== Cosas con entrega de proveedores ======
