@@ -1,3 +1,4 @@
+ucu/edu/implementaciones/ABBTest.class
 ucu/edu/implementaciones/ListaArrayTest.class
 ucu/edu/implementaciones/ListaCircularDobleTest.class
 ucu/edu/implementaciones/ListaCircularSimpleTest.class
@@ -7,5 +8,8 @@ ucu/edu/implementaciones/ColaPrioridadTest.class
 ucu/edu/almacen/TerminalCargaTest.class
 ucu/edu/implementaciones/ListaDoblementeEnlazadaTest.class
 ucu/edu/almacen/AlmacenLogisticoTest.class
+ucu/edu/implementaciones/ColaPrioridadDobleEnlazadaTest.class
 ucu/edu/implementaciones/ListaSimplementeEnlazadaTest.class
+ucu/edu/implementaciones/MonticuloBinarioTest.class
+ucu/edu/implementaciones/BenchmarkColaPrioridad.class
 ucu/edu/implementaciones/ConjuntoTest.class

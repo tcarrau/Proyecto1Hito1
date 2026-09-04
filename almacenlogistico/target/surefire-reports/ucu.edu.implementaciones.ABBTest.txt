@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
-Test set: ucu.edu.almacen.TerminalCargaTest
+Test set: ucu.edu.implementaciones.ABBTest
 -------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in ucu.edu.almacen.TerminalCargaTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.002 s -- in ucu.edu.implementaciones.ABBTest
