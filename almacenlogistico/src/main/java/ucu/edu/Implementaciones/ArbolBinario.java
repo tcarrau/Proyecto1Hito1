@@ -1,4 +1,4 @@
-package ucu.edu.implementaciones;
+package ucu.edu.aed.implementaciones;
 import java.util.function.Consumer;
 
 import ucu.edu.aed.tda.TDAArbolBinario;
@@ -24,18 +24,14 @@ public class ArbolBinario<T> implements TDAArbolBinario<T> {
      * @return el primer elemento que cumple el criterio, o {@code null}
      * si no existe ninguno
      */
-    public T buscar(Comparable<T> predicate){
-        return null;
-    };
+    public T buscar(Comparable<T> predicate){};
 
     /**
      * Retorna el elemento raíz del árbol.
      *
      * @return el elemento raíz del árbol, o {@code null} si el árbol está vacío
      */
-    public TDAElemento<T> obtenerRaiz(){
-        return null;
-    };
+    public TDAElemento<T> obtenerRaiz(){};
 
     /**
      * Elimina el o los nodos según el criterio de búsqueda.
@@ -44,9 +40,7 @@ public class ArbolBinario<T> implements TDAArbolBinario<T> {
      * @return {@code true} si al menos un elemento fue eliminado{};
      * {@code false} en caso contrario
      */
-    public boolean eliminar(Comparable<T> criterioBusqueda){
-        return false;
-    };
+    public boolean eliminar(Comparable<T> criterioBusqueda){};
 
     /**
      * Agrega un dato al árbol.
@@ -57,9 +51,7 @@ public class ArbolBinario<T> implements TDAArbolBinario<T> {
      * @return {@code true} si el elemento fue agregado correctamente{};
      * {@code false} si el elemento ya existía y no fue agregado
      */
-    public boolean insertar(Comparable<T> dato){
-        return false;
-    };
+    public boolean insertar(Comparable<T> dato){};
 
     /**
      * Recorre el árbol en in-order
@@ -102,29 +94,21 @@ public class ArbolBinario<T> implements TDAArbolBinario<T> {
     /**
      * Devuelve true si el árbol es vacío
      */
-    public boolean esVacio(){
-        return false;
-    };
+    public boolean esVacio(){};
 
     /**
      * Devuelve la cantidad de nodos del árbol
      **/
-    public int cantidadNodos(){
-        return 0;
-    };
+    public int cantidadNodos(){};
 
     /**
      * Devuelve la cantidad de nodos que son hojas
      */
-    public int cantidadHojas(){
-        return 0;
-    };
+    public int cantidadHojas(){};
 
     /**
      * Devuelve la cantidad de nodos que NO son hojas
      */
-    public int cantidadNodosInternos(){
-        return 0;
-    };
+    public int cantidadNodosInternos(){};
 
 }

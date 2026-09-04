@@ -1,4 +1,4 @@
-package ucu.edu.implementaciones;
+package ucu.edu.aed.implementaciones;
 
 import java.util.function.Consumer;
 import ucu.edu.aed.tda.TDAElemento;
