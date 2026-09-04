@@ -24,14 +24,18 @@ public class ArbolBinario<T> implements TDAArbolBinario<T> {
      * @return el primer elemento que cumple el criterio, o {@code null}
      * si no existe ninguno
      */
-    public T buscar(Comparable<T> predicate){};
+    public T buscar(Comparable<T> predicate){
+        return null;
+    };
 
     /**
      * Retorna el elemento raíz del árbol.
      *
      * @return el elemento raíz del árbol, o {@code null} si el árbol está vacío
      */
-    public TDAElemento<T> obtenerRaiz(){};
+    public TDAElemento<T> obtenerRaiz(){
+        return null;
+    };
 
     /**
      * Elimina el o los nodos según el criterio de búsqueda.
@@ -40,7 +44,9 @@ public class ArbolBinario<T> implements TDAArbolBinario<T> {
      * @return {@code true} si al menos un elemento fue eliminado{};
      * {@code false} en caso contrario
      */
-    public boolean eliminar(Comparable<T> criterioBusqueda){};
+    public boolean eliminar(Comparable<T> criterioBusqueda){
+        return false;
+    };
 
     /**
      * Agrega un dato al árbol.
@@ -51,7 +57,9 @@ public class ArbolBinario<T> implements TDAArbolBinario<T> {
      * @return {@code true} si el elemento fue agregado correctamente{};
      * {@code false} si el elemento ya existía y no fue agregado
      */
-    public boolean insertar(Comparable<T> dato){};
+    public boolean insertar(Comparable<T> dato){
+        return false;
+    };
 
     /**
      * Recorre el árbol en in-order
@@ -94,21 +102,29 @@ public class ArbolBinario<T> implements TDAArbolBinario<T> {
     /**
      * Devuelve true si el árbol es vacío
      */
-    public boolean esVacio(){};
+    public boolean esVacio(){
+        return false;
+    };
 
     /**
      * Devuelve la cantidad de nodos del árbol
      **/
-    public int cantidadNodos(){};
+    public int cantidadNodos(){
+        return 0;
+    };
 
     /**
      * Devuelve la cantidad de nodos que son hojas
      */
-    public int cantidadHojas(){};
+    public int cantidadHojas(){
+        return 0;
+    };
 
     /**
      * Devuelve la cantidad de nodos que NO son hojas
      */
-    public int cantidadNodosInternos(){};
+    public int cantidadNodosInternos(){
+        return 0;
+    };
 
 }
