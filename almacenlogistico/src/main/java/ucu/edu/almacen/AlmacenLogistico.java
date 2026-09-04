@@ -6,8 +6,13 @@ import java.time.LocalDateTime;
 import ucu.edu.implementaciones.Cola;
 import ucu.edu.implementaciones.ListaArray;
 import ucu.edu.implementaciones.ColaPrioridadDobleEnlazada;
+import ucu.edu.implementaciones.ArbolAVL;
+import ucu.edu.implementaciones.MonticuloMaximo;
 
 public class AlmacenLogistico {
+    private Deposito deposito;
+    private ArbolAVL<RegistroInventario> inventario;
+    private MonticuloMaximo<PedidoSucursal> pedidosPrioritarios;
     private ListaArray<DetalleProducto> productos;
     private ListaArray<TerminalCarga> terminales;
     private ColaPrioridadDobleEnlazada<PedidoSucursal> pedidosPendientes; //esta fue la optimizacion
@@ -23,6 +28,9 @@ public class AlmacenLogistico {
      * para probar las funciones desde un menú interactivo.
      */
     public AlmacenLogistico(boolean cargarDatosBase) {
+        this.deposito = new Deposito();
+        this.inventario = new ArbolAVL<>();
+        this.pedidosPrioritarios = new MonticuloMaximo<>();
         this.productos = new ListaArray<>();
         this.terminales = new ListaArray<>();
         this.esperaProveedores = new Cola<>(15);
@@ -40,6 +48,25 @@ public class AlmacenLogistico {
         if (cargarDatosBase) {
             cargarDatosBase();
         }
+    }
+
+    /** Estructura física del depósito para las extensiones del siguiente hito. */
+    public Deposito getDeposito() {
+        return deposito;
+    }
+
+    public void setDeposito(Deposito deposito) {
+        this.deposito = deposito;
+    }
+
+    /** Índice de inventario por producto y sus ubicaciones. */
+    public ArbolAVL<RegistroInventario> getInventario() {
+        return inventario;
+    }
+
+    /** Montículo previsto para los pedidos prioritarios del siguiente hito. */
+    public MonticuloMaximo<PedidoSucursal> getPedidosPrioritarios() {
+        return pedidosPrioritarios;
     }
 
     /**

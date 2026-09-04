@@ -3,11 +3,13 @@ package ucu.edu.almacen;
 public class TerminalCarga {
     private boolean habilitada;
     private OperacionCarga operacionActual;
+    private EstadoTerminal estado;
     private int id;
 
     public TerminalCarga(int id) {
         this.habilitada = true;
         this.operacionActual = OperacionCarga.LIBRE;
+        this.estado = EstadoTerminal.LIBRE;
         this.id = id;
     }
 
@@ -29,6 +31,14 @@ public class TerminalCarga {
 
     public void setOperacionActual(OperacionCarga operacionActual) {
         this.operacionActual = operacionActual;
+    }
+
+    public EstadoTerminal getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoTerminal estado) {
+        this.estado = estado;
     }
 
     /**
