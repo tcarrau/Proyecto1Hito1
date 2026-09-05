@@ -35,9 +35,20 @@ public class RegistroInventario implements Comparable<RegistroInventario> {
         this.ubicaciones = ubicaciones;
     }
 
+    public StockUbicado getStockUbicado(Sector sector) {
+        if (sector == null || sector.getCodigo() == null) {
+            return null;
+        }
+
+        return ubicaciones.buscar(ubicacion -> ubicacion.getPosicion() != null
+                && sector.getCodigo().equals(ubicacion.getPosicion().getCodigo()));
+    }
+
     @Override
     public int compareTo(RegistroInventario otro) {
         // TODO: definir validaciones de integridad del registro.
         return producto.getCodigo().compareTo(otro.producto.getCodigo());
     }
+
+    
 }

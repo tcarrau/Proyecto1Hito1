@@ -322,7 +322,144 @@ public class AlmacenLogistico {
         }
     }
 
+    /*
+    HITO2 INVENTARIO
+    */
+    public void registrarProducto(Producto producto, StockUbicado ubicacion) {
+        if (producto == null || producto.getCodigo() == null
+                || producto.getCodigo().isBlank()) {
+            throw new IllegalArgumentException("El producto debe tener un código");
+        }
+  
+        if (ubicacion == null) {
+            throw new IllegalArgumentException("La ubicación no puede ser null");
+        }
+  
+        RegistroInventario criterio = new RegistroInventario(producto);
+  
+        if (inventario.buscar(criterio) != null) {
+            return;
+        }
+  
+        RegistroInventario nuevoRegistro = new RegistroInventario(producto);
+        nuevoRegistro.getUbicaciones().agregar(ubicacion);
+  
+        inventario.insertar(nuevoRegistro);
+    }
 
+    public RegistroInventario buscarProductoInventario(String codigo) {
+        // recorrer inventario y encontrarlo
+
+        if (codigo == null || codigo.isBlank()) {
+            return null;
+        }
+       
+       RegistroInventario registroBuscar = new RegistroInventario();
+       Producto p = new Producto();
+       p.setCodigo(codigo);
+       registroBuscar.setProducto(p);
+       
+
+        return inventario.buscar(registroBuscar);
+    }
+
+    public void aumentarStockRegistro(String codigo, int cantidad, Sector sector) {
+        if (cantidad <= 0) {
+            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
+        }
+        if (sector == null) {
+            throw new IllegalArgumentException("El sector no puede ser null");
+        }
+
+        RegistroInventario registro = buscarProductoInventario(codigo);
+
+        if (registro == null) {
+            throw new IllegalArgumentException("No existe un producto con ese código");
+        }
+
+        StockUbicado stockUbicado = registro.getStockUbicado(sector);
+
+        if (stockUbicado == null) {
+            registro.getUbicaciones().agregar(new StockUbicado(sector, cantidad));
+            return;
+        }
+
+        stockUbicado.setCantidad(stockUbicado.getCantidad() + cantidad);
+    }
+
+    /**
+     * Descuenta stock de una ubicación concreta del inventario del Hito 2.
+     *
+     * @return {@code true} si la ubicación tenía cantidad suficiente
+     */
+    public boolean disminuirStockRegistro(String codigo, int cantidad, Sector sector) {
+        if (cantidad <= 0 || sector == null) {
+            return false;
+        }
+
+        RegistroInventario registro = buscarProductoInventario(codigo);
+        if (registro == null) {
+            return false;
+        }
+
+        StockUbicado stockUbicado = registro.getStockUbicado(sector);
+        if (stockUbicado == null || stockUbicado.getCantidad() < cantidad) {
+            return false;
+        }
+
+        stockUbicado.setCantidad(stockUbicado.getCantidad() - cantidad);
+        return true;
+    }
+
+    /** Indica si la suma de todas las ubicaciones alcanza la cantidad solicitada. */
+    public boolean hayCantNecesariasRegistro(String codigo, int cantidad) {
+        if (cantidad <= 0) {
+            return false;
+        }
+
+        RegistroInventario registro = buscarProductoInventario(codigo);
+        return registro != null && obtenerStockTotalRegistro(registro) >= cantidad;
+    }
+
+    /** Devuelve el stock total de un producto, sumando todas sus ubicaciones. */
+    public int obtenerStockProductoRegistro(String codigo) {
+        RegistroInventario registro = buscarProductoInventario(codigo);
+        return registro == null ? 0 : obtenerStockTotalRegistro(registro);
+    }
+
+    /** Devuelve el stock total de todos los registros del AVL del Hito 2. */
+    public int cantidadInventarioTotalRegistro() {
+        final int[] total = {0};
+        inventario.inOrder(registro -> total[0] += obtenerStockTotalRegistro(registro));
+        return total[0];
+    }
+
+    /** Lista cada producto del Hito 2 junto con el total de sus ubicaciones. */
+    public void listarProductosYStockRegistro() {
+        inventario.inOrder(registro -> System.out.println(
+                registro.getProducto() + ": " + obtenerStockTotalRegistro(registro)));
+    }
+
+    /** Devuelve los productos del Hito 2 cuya suma de ubicaciones es cero. */
+    public ListaArray<Producto> productosSinStockRegistro() {
+        ListaArray<Producto> productosSinStock = new ListaArray<>();
+        inventario.inOrder(registro -> {
+            if (obtenerStockTotalRegistro(registro) == 0) {
+                productosSinStock.agregar(registro.getProducto());
+            }
+        });
+        return productosSinStock;
+    }
+
+    private int obtenerStockTotalRegistro(RegistroInventario registro) {
+        int total = 0;
+        ListaArray<StockUbicado> ubicaciones = registro.getUbicaciones();
+
+        for (int i = 0; i < ubicaciones.tamaño(); i++) {
+            total += ubicaciones.obtener(i).getCantidad();
+        }
+        return total;
+    }
     /*
             ==============================================
             ====== Cosas con entrega de proveedores ======
