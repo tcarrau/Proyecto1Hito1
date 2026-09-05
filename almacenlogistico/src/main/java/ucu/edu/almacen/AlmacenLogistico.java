@@ -388,6 +388,14 @@ public class AlmacenLogistico {
     }
 
     /**
+     * Registra mercadería en una posición. Si el producto ya estaba ubicado en
+     * ese sector, acumula la cantidad recibida.
+     */
+    public void registrarUbicacionMercaderia(String codigo, Sector posicion, int cantidad) {
+        aumentarStockRegistro(codigo, cantidad, posicion);
+    }
+
+    /**
      * Descuenta stock de una ubicación concreta del inventario del Hito 2.
      *
      * @return {@code true} si la ubicación tenía cantidad suficiente
@@ -408,6 +416,39 @@ public class AlmacenLogistico {
         }
 
         stockUbicado.setCantidad(stockUbicado.getCantidad() - cantidad);
+        return true;
+    }
+
+    /**
+     * Da de baja mercadería desde una posición determinada.
+     *
+     * @return {@code true} si la posición tenía cantidad suficiente
+     */
+    public boolean darBajaMercaderia(String codigo, Sector posicion, int cantidad) {
+        return disminuirStockRegistro(codigo, cantidad, posicion);
+    }
+
+    /**
+     * Traslada mercadería entre dos posiciones del mismo producto.
+     * La operación solo modifica el destino cuando la baja del origen fue
+     * posible, para evitar crear stock sin descontarlo previamente.
+     *
+     * @return {@code true} si la reubicación fue realizada
+     */
+    public boolean reubicarMercaderia(String codigo, Sector origen, Sector destino, int cantidad) {
+        if (origen == null || destino == null || cantidad <= 0) {
+            return false;
+        }
+
+        if (origen.getCodigo() != null && origen.getCodigo().equals(destino.getCodigo())) {
+            return true;
+        }
+
+        if (!disminuirStockRegistro(codigo, cantidad, origen)) {
+            return false;
+        }
+
+        aumentarStockRegistro(codigo, cantidad, destino);
         return true;
     }
 
