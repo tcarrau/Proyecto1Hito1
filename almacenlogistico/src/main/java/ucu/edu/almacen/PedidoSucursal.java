@@ -5,6 +5,7 @@ import java.time.*;
 public class PedidoSucursal {
     private int prioridad;
     private ListaArray<DetalleProducto> productos;
+    private ListaArray<PasoRecoleccion> pasosRecoleccion = new ListaArray<>();
     private LocalDateTime fecha;
     private Sucursal sucursal;
 
@@ -22,6 +23,15 @@ public class PedidoSucursal {
 
     public void setProductos(ListaArray<DetalleProducto> productos) {
         this.productos = productos;
+    }
+
+    /** Pasos ordenados para recolectar el pedido desde las posiciones del depósito. */
+    public ListaArray<PasoRecoleccion> getPasosRecoleccion() {
+        return pasosRecoleccion;
+    }
+
+    public void setPasosRecoleccion(ListaArray<PasoRecoleccion> pasosRecoleccion) {
+        this.pasosRecoleccion = pasosRecoleccion;
     }
 
     public LocalDateTime getFecha() {

@@ -6,12 +6,11 @@ import java.time.LocalDateTime;
 import ucu.edu.implementaciones.Cola;
 import ucu.edu.implementaciones.ListaArray;
 import ucu.edu.implementaciones.ColaPrioridadDobleEnlazada;
-import ucu.edu.implementaciones.ArbolAVL;
 import ucu.edu.implementaciones.MonticuloMaximo;
 
 public class AlmacenLogistico {
     private Deposito deposito;
-    private ArbolAVL<RegistroInventario> inventario;
+    private Inventario inventario;
     private MonticuloMaximo<PedidoSucursal> pedidosPrioritarios;
     private ListaArray<DetalleProducto> productos;
     private ListaArray<TerminalCarga> terminales;
@@ -29,7 +28,7 @@ public class AlmacenLogistico {
      */
     public AlmacenLogistico(boolean cargarDatosBase) {
         this.deposito = new Deposito();
-        this.inventario = new ArbolAVL<>();
+        this.inventario = new Inventario();
         this.pedidosPrioritarios = new MonticuloMaximo<>();
         this.productos = new ListaArray<>();
         this.terminales = new ListaArray<>();
@@ -60,7 +59,7 @@ public class AlmacenLogistico {
     }
 
     /** Índice de inventario por producto y sus ubicaciones. */
-    public ArbolAVL<RegistroInventario> getInventario() {
+    public Inventario getInventario() {
         return inventario;
     }
 
@@ -323,327 +322,6 @@ public class AlmacenLogistico {
     }
 
     /*
-    HITO2 INVENTARIO
-    */
-    public void registrarProducto(Producto producto, StockUbicado ubicacion) {
-        if (producto == null || producto.getCodigo() == null
-                || producto.getCodigo().isBlank()) {
-            throw new IllegalArgumentException("El producto debe tener un código");
-        }
-  
-        if (ubicacion == null) {
-            throw new IllegalArgumentException("La ubicación no puede ser null");
-        }
-  
-        RegistroInventario criterio = new RegistroInventario(producto);
-  
-        if (inventario.buscar(criterio) != null) {
-            return;
-        }
-  
-        RegistroInventario nuevoRegistro = new RegistroInventario(producto);
-        nuevoRegistro.getUbicaciones().agregar(ubicacion);
-  
-        inventario.insertar(nuevoRegistro);
-    }
-
-    public RegistroInventario buscarProductoInventario(String codigo) {
-        // recorrer inventario y encontrarlo
-
-        if (codigo == null || codigo.isBlank()) {
-            return null;
-        }
-       
-       RegistroInventario registroBuscar = new RegistroInventario();
-       Producto p = new Producto();
-       p.setCodigo(codigo);
-       registroBuscar.setProducto(p);
-       
-
-        return inventario.buscar(registroBuscar);
-    }
-
-    public void aumentarStockRegistro(String codigo, int cantidad, Sector sector) {
-        if (cantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
-        }
-        if (sector == null) {
-            throw new IllegalArgumentException("El sector no puede ser null");
-        }
-
-        RegistroInventario registro = buscarProductoInventario(codigo);
-
-        if (registro == null) {
-            throw new IllegalArgumentException("No existe un producto con ese código");
-        }
-
-        StockUbicado stockUbicado = registro.getStockUbicado(sector);
-
-        if (stockUbicado == null) {
-            registro.getUbicaciones().agregar(new StockUbicado(sector, cantidad));
-            return;
-        }
-
-        stockUbicado.setCantidad(stockUbicado.getCantidad() + cantidad);
-    }
-
-    /**
-     * Registra mercadería en una posición. Si el producto ya estaba ubicado en
-     * ese sector, acumula la cantidad recibida.
-     */
-    public void registrarUbicacionMercaderia(String codigo, Sector posicion, int cantidad) {
-        aumentarStockRegistro(codigo, cantidad, posicion);
-    }
-
-    /**
-     * Descuenta stock de una ubicación concreta del inventario del Hito 2.
-     *
-     * @return {@code true} si la ubicación tenía cantidad suficiente
-     */
-    public boolean disminuirStockRegistro(String codigo, int cantidad, Sector sector) {
-        if (cantidad <= 0 || sector == null) {
-            return false;
-        }
-
-        RegistroInventario registro = buscarProductoInventario(codigo);
-        if (registro == null) {
-            return false;
-        }
-
-        StockUbicado stockUbicado = registro.getStockUbicado(sector);
-        if (stockUbicado == null || stockUbicado.getCantidad() < cantidad) {
-            return false;
-        }
-
-        stockUbicado.setCantidad(stockUbicado.getCantidad() - cantidad);
-        return true;
-    }
-
-    /**
-     * Da de baja mercadería desde una posición determinada.
-     *
-     * @return {@code true} si la posición tenía cantidad suficiente
-     */
-    public boolean darBajaMercaderia(String codigo, Sector posicion, int cantidad) {
-        return disminuirStockRegistro(codigo, cantidad, posicion);
-    }
-
-    /**
-     * Traslada mercadería entre dos posiciones del mismo producto.
-     * La operación solo modifica el destino cuando la baja del origen fue
-     * posible, para evitar crear stock sin descontarlo previamente.
-     *
-     * @return {@code true} si la reubicación fue realizada
-     */
-    public boolean reubicarMercaderia(String codigo, Sector origen, Sector destino, int cantidad) {
-        if (origen == null || destino == null || cantidad <= 0) {
-            return false;
-        }
-
-        if (origen.getCodigo() != null && origen.getCodigo().equals(destino.getCodigo())) {
-            return true;
-        }
-
-        if (!disminuirStockRegistro(codigo, cantidad, origen)) {
-            return false;
-        }
-
-        aumentarStockRegistro(codigo, cantidad, destino);
-        return true;
-    }
-
-    /** Delega el movimiento del subárbol físico al depósito. */
-    public boolean moverSector(String codigoSector, String codigoNuevoPadre) {
-        return deposito != null && deposito.moverSector(codigoSector, codigoNuevoPadre);
-    }
-
-    /**
-     * Inhabilita un sector luego de mover toda la mercadería de su subárbol a
-     * posiciones habilitadas con capacidad libre fuera de dicho subárbol.
-     *
-     * @return {@code true} si se logró reubicar toda la mercadería y se
-     *         inhabilitó el sector; {@code false} si el sector no existe o no
-     *         hay capacidad disponible suficiente
-     */
-    public boolean inhabilitarSector(String codigoSector) {
-        if (deposito == null) {
-            return false;
-        }
-
-        Sector sector = deposito.buscarSector(codigoSector);
-        if (sector == null || !sector.isHabilitado()) {
-            return false;
-        }
-
-        ListaArray<Sector> sectoresAInhabilitar = deposito.obtenerSectoresDelSubarbol(codigoSector);
-        ListaArray<Sector> posicionesDestino = obtenerPosicionesDisponibles(sectoresAInhabilitar);
-
-        if (cantidadMercaderiaEnSectores(sectoresAInhabilitar)
-                > capacidadLibreTotal(posicionesDestino)) {
-            return false;
-        }
-
-        inventario.inOrder(registro -> reubicarRegistroFueraDeSectores(
-                registro, sectoresAInhabilitar, posicionesDestino));
-        sector.setHabilitado(false);
-        return true;
-    }
-
-    private ListaArray<Sector> obtenerPosicionesDisponibles(
-            ListaArray<Sector> sectoresExcluidos) {
-        ListaArray<Sector> posiciones = new ListaArray<>();
-
-        deposito.getSectores().preOrder(sector -> {
-            if (sector.getTipo() == TipoSector.POSICION
-                    && sector.isHabilitado()
-                    && !contieneSector(sectoresExcluidos, sector)
-                    && capacidadLibre(sector) > 0) {
-                posiciones.agregar(sector);
-            }
-        });
-        return posiciones;
-    }
-
-    private int cantidadMercaderiaEnSectores(ListaArray<Sector> sectores) {
-        final int[] total = {0};
-        inventario.inOrder(registro -> {
-            ListaArray<StockUbicado> ubicaciones = registro.getUbicaciones();
-            for (int i = 0; i < ubicaciones.tamaño(); i++) {
-                StockUbicado stock = ubicaciones.obtener(i);
-                if (contieneSector(sectores, stock.getPosicion())) {
-                    total[0] += stock.getCantidad();
-                }
-            }
-        });
-        return total[0];
-    }
-
-    private int capacidadLibreTotal(ListaArray<Sector> posiciones) {
-        int total = 0;
-        for (int i = 0; i < posiciones.tamaño(); i++) {
-            total += capacidadLibre(posiciones.obtener(i));
-        }
-        return total;
-    }
-
-    private int capacidadLibre(Sector posicion) {
-        return Math.max(0, posicion.getCapacidad() - cantidadOcupada(posicion));
-    }
-
-    private int cantidadOcupada(Sector posicion) {
-        final int[] ocupada = {0};
-        inventario.inOrder(registro -> {
-            StockUbicado stock = registro.getStockUbicado(posicion);
-            if (stock != null) {
-                ocupada[0] += stock.getCantidad();
-            }
-        });
-        return ocupada[0];
-    }
-
-    private void reubicarRegistroFueraDeSectores(RegistroInventario registro,
-            ListaArray<Sector> sectoresOrigen, ListaArray<Sector> posicionesDestino) {
-        ListaArray<StockUbicado> ubicaciones = registro.getUbicaciones();
-        int cantidadOriginalUbicaciones = ubicaciones.tamaño();
-
-        for (int i = 0; i < cantidadOriginalUbicaciones; i++) {
-            StockUbicado origen = ubicaciones.obtener(i);
-            if (!contieneSector(sectoresOrigen, origen.getPosicion())
-                    || origen.getCantidad() == 0) {
-                continue;
-            }
-
-            int pendiente = origen.getCantidad();
-            for (int j = 0; j < posicionesDestino.tamaño() && pendiente > 0; j++) {
-                Sector destino = posicionesDestino.obtener(j);
-                int aMover = Math.min(pendiente, capacidadLibre(destino));
-
-                if (aMover > 0) {
-                    StockUbicado stockDestino = registro.getStockUbicado(destino);
-                    if (stockDestino == null) {
-                        ubicaciones.agregar(new StockUbicado(destino, aMover));
-                    } else {
-                        stockDestino.setCantidad(stockDestino.getCantidad() + aMover);
-                    }
-                    origen.setCantidad(origen.getCantidad() - aMover);
-                    pendiente -= aMover;
-                }
-            }
-        }
-
-        for (int i = cantidadOriginalUbicaciones - 1; i >= 0; i--) {
-            StockUbicado stock = ubicaciones.obtener(i);
-            if (contieneSector(sectoresOrigen, stock.getPosicion())
-                    && stock.getCantidad() == 0) {
-                ubicaciones.remover(i);
-            }
-        }
-    }
-
-    private boolean contieneSector(ListaArray<Sector> sectores, Sector sector) {
-        if (sector == null || sector.getCodigo() == null) {
-            return false;
-        }
-
-        for (int i = 0; i < sectores.tamaño(); i++) {
-            Sector actual = sectores.obtener(i);
-            if (sector.getCodigo().equals(actual.getCodigo())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /** Indica si la suma de todas las ubicaciones alcanza la cantidad solicitada. */
-    public boolean hayCantNecesariasRegistro(String codigo, int cantidad) {
-        if (cantidad <= 0) {
-            return false;
-        }
-
-        RegistroInventario registro = buscarProductoInventario(codigo);
-        return registro != null && obtenerStockTotalRegistro(registro) >= cantidad;
-    }
-
-    /** Devuelve el stock total de un producto, sumando todas sus ubicaciones. */
-    public int obtenerStockProductoRegistro(String codigo) {
-        RegistroInventario registro = buscarProductoInventario(codigo);
-        return registro == null ? 0 : obtenerStockTotalRegistro(registro);
-    }
-
-    /** Devuelve el stock total de todos los registros del AVL del Hito 2. */
-    public int cantidadInventarioTotalRegistro() {
-        final int[] total = {0};
-        inventario.inOrder(registro -> total[0] += obtenerStockTotalRegistro(registro));
-        return total[0];
-    }
-
-    /** Lista cada producto del Hito 2 junto con el total de sus ubicaciones. */
-    public void listarProductosYStockRegistro() {
-        inventario.inOrder(registro -> System.out.println(
-                registro.getProducto() + ": " + obtenerStockTotalRegistro(registro)));
-    }
-
-    /** Devuelve los productos del Hito 2 cuya suma de ubicaciones es cero. */
-    public ListaArray<Producto> productosSinStockRegistro() {
-        ListaArray<Producto> productosSinStock = new ListaArray<>();
-        inventario.inOrder(registro -> {
-            if (obtenerStockTotalRegistro(registro) == 0) {
-                productosSinStock.agregar(registro.getProducto());
-            }
-        });
-        return productosSinStock;
-    }
-
-    private int obtenerStockTotalRegistro(RegistroInventario registro) {
-        int total = 0;
-        ListaArray<StockUbicado> ubicaciones = registro.getUbicaciones();
-
-        for (int i = 0; i < ubicaciones.tamaño(); i++) {
-            total += ubicaciones.obtener(i).getCantidad();
-        }
-        return total;
-    }
-    /*
             ==============================================
             ====== Cosas con entrega de proveedores ======
             ==============================================
@@ -690,6 +368,24 @@ public class AlmacenLogistico {
         EntregaProveedor entrega = esperaProveedores.quitaDeCola();
         actualizarStockEntrega(entrega);
         return entrega;
+    }
+
+    /**
+     * Descarga una entrega que ya indica las posiciones físicas de guardado.
+     * La cola FIFO permanece en el almacén y el inventario procesa sus registros.
+     */
+    public EntregaProveedor descargarSiguienteEntregaProveedorUbicada() {
+        if (esperaProveedores.esVacia()) {
+            throw new NoSuchElementException("No hay entregas pendientes");
+        }
+
+        EntregaProveedor entrega = esperaProveedores.frente();
+        if (entrega.getMercaderiaUbicada() == null) {
+            throw new IllegalStateException("La entrega no indica posiciones de guardado");
+        }
+
+        inventario.registrarMercaderiaRecibida(entrega.getMercaderiaUbicada());
+        return esperaProveedores.quitaDeCola();
     }
 
     /**
