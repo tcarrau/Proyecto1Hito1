@@ -3,6 +3,7 @@ package ucu.edu.almacen;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,12 @@ class ReorganizacionDepositoTest {
         Producto producto = new Producto("P-001", "Producto");
         Inventario inventario = almacen.getInventario();
         inventario.registrarProducto(producto, new StockUbicado(posicionOrigen, 6));
+
+        assertEquals(20, inventario.obtenerCapacidadTotal(deposito, "DEP"));
+        assertEquals(6, inventario.obtenerOcupacion(deposito, "DEP"));
+        assertEquals(14, inventario.obtenerCapacidadDisponible(deposito, "DEP"));
+        assertThrows(IllegalStateException.class,
+                () -> inventario.aumentarStock("P-001", 5, posicionOrigen));
 
         assertTrue(inventario.inhabilitarSector(deposito, "ZO"));
 

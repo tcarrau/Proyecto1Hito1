@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="ucu.edu.almacen.AlmacenLogisticoTest" time="0.202" tests="41" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="ucu.edu.implementaciones.MonticuloMaximoTest" time="0.003" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="17"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -54,45 +54,5 @@
     <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
     <property name="java.class.version" value="61.0"/>
   </properties>
-  <testcase name="disminuirStockDeProductoNoRegistradoDevuelveFalse" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.039"/>
-  <testcase name="consultaYDespachoDePedidosSinPendientesDevuelvenNull" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="productosConStockBajoIncluyeStockMenorAlMinimo" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.004"/>
-  <testcase name="descargarSiguienteEntregaProveedorActualizaStockYLaQuitaDeLaCola" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.018"/>
-  <testcase name="flujoTerminalIniciaOperacionImpideOtraYLuegoLaLibera" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.003"/>
-  <testcase name="descargarEntregaRechazaCantidadesNoPositivas" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="pedidosConMismaPrioridadDaPreferenciaAlMasAntiguo" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.003"/>
-  <testcase name="colaDeProveedoresNoSuperaSuCapacidadMaxima" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.008"/>
-  <testcase name="buscarProductoConCodigoNullDevuelveNull" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="datosBaseIncluyenDosTerminalesLibres" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="disminuirStockDescuentaCuandoHayCantidadSuficiente" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="descargarSiguienteEntregaProveedorLanzaExcepcionSinEntregas" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="modificarPrioridadReordenaUnPedidoPendienteEnElMonticulo" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="obtenerSiguienteEntregaProveedorNoLaQuitaDeLaCola" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="registrarPedidoReabastecimientoPriorizaSucursalConMasClientes" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
-  <testcase name="noDespachaPedidoReabastecimientoSiNoHayStockSuficiente" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
-  <testcase name="descargarEntregasRespetaElOrdenFifo" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="productosConStockBajoDevuelveListaVaciaConInventarioVacio" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.005"/>
-  <testcase name="despacharPedidoReabastecimientoDescuentaStockYLoQuitaDeLaCola" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.003"/>
-  <testcase name="aumentarStockIncrementaLaCantidadDelProducto" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="descargarEntregaConProductoNoRegistradoLanzaExcepcion" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.003"/>
-  <testcase name="productosConStockBajoIncluyeStockIgualAlMinimo" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="aumentarStockRechazaCantidadesNoPositivas" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="flujoCompletoRecibeEntregaPriorizaYDespachaReabastecimientos" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="registrarTerminalLaAgregaYPermiteBuscarla" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="registrarPedidoReabastecimientoRechazaPedidoIncompleto" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.003"/>
-  <testcase name="aumentarStockRechazaProductoNoRegistrado" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="registrarProductoLoAgregaConStockInicialCero" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="registrarProductoRechazaProductoONombreDeCodigoInvalidos" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.004"/>
-  <testcase name="registrarProductoDuplicadoNoReemplazaElProductoOriginal" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
-  <testcase name="disminuirStockNoModificaElStockCuandoNoAlcanza" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="disminuirStockConCantidadExactaDejaElStockEnCero" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="registrarEntregaProveedorLaAgregaALaCola" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
-  <testcase name="noDespachaPedidoSiUnProductoRepetidoSuperaElStockDisponible" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
-  <testcase name="registrarEntregaProveedorRechazaEntregaSinDatosObligatorios" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="productosSinStockDevuelveSoloLosProductosSinUnidades" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="proveedoresConEntregasPendientesNoRepiteProveedores" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.001"/>
-  <testcase name="descargarEntregaConVariosProductosActualizaTodoElStock" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
-  <testcase name="registrarTerminalRechazaTerminalNulaODuplicada" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
-  <testcase name="obtenerSiguienteEntregaProveedorLanzaExcepcionSinEntregas" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.0"/>
-  <testcase name="noIniciaOperacionEnTerminalDeshabilitada" classname="ucu.edu.almacen.AlmacenLogisticoTest" time="0.002"/>
+  <testcase name="conservaElMayorElementoEnLaRaiz" classname="ucu.edu.implementaciones.MonticuloMaximoTest" time="0.0"/>
 </testsuite>

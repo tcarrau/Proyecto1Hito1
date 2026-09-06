@@ -5,16 +5,13 @@ import java.time.LocalDateTime;
 
 import ucu.edu.implementaciones.Cola;
 import ucu.edu.implementaciones.ListaArray;
-import ucu.edu.implementaciones.ColaPrioridadDobleEnlazada;
 import ucu.edu.implementaciones.MonticuloMaximo;
 
 public class AlmacenLogistico {
     private Deposito deposito;
     private Inventario inventario;
     private MonticuloMaximo<PedidoSucursal> pedidosPrioritarios;
-    private ListaArray<DetalleProducto> productos;
     private ListaArray<TerminalCarga> terminales;
-    private ColaPrioridadDobleEnlazada<PedidoSucursal> pedidosPendientes; //esta fue la optimizacion
     private Cola<EntregaProveedor> esperaProveedores;
 
 
@@ -30,20 +27,8 @@ public class AlmacenLogistico {
         this.deposito = new Deposito();
         this.inventario = new Inventario();
         this.pedidosPrioritarios = new MonticuloMaximo<>();
-        this.productos = new ListaArray<>();
         this.terminales = new ListaArray<>();
         this.esperaProveedores = new Cola<>(15);
-        this.pedidosPendientes = new ColaPrioridadDobleEnlazada<>((pedido1, pedido2) -> {
-            int comparacionPrioridad = Integer.compare(
-                    pedido2.getPrioridad(), pedido1.getPrioridad());
-
-            if (comparacionPrioridad != 0) {
-                return comparacionPrioridad;
-            }
-
-            return pedido1.getFecha().compareTo(pedido2.getFecha());
-        });
-
         if (cargarDatosBase) {
             cargarDatosBase();
         }
@@ -234,11 +219,7 @@ public class AlmacenLogistico {
          }
 
         
-        DetalleProducto nuevoProducto = new DetalleProducto();
-        nuevoProducto.setProducto(producto);
-        nuevoProducto.setCantidad(0);
-        nuevoProducto.setCantidadMinima(0);
-        productos.agregar(nuevoProducto);
+        inventario.registrarProducto(producto);
 
     }
 
@@ -249,15 +230,7 @@ public class AlmacenLogistico {
             return null;
         }
 
-        for(int i = 0; i < productos.tamaño(); i++){
-            DetalleProducto detalle = productos.obtener(i);
-            Producto actual = detalle.getProducto();
-            if(actual.getCodigo().equals(codigo)){
-                return detalle;
-            }
-        }
-
-        return null;
+        return inventario.buscarDetalleProducto(codigo);
     }
 
     public void aumentarStock(String codigo, int cantidad) {
@@ -266,14 +239,7 @@ public class AlmacenLogistico {
             throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
         }
 
-        DetalleProducto detalleProducto = buscarProducto(codigo);
-
-        if (detalleProducto == null) {
-            throw new IllegalArgumentException("No existe un producto con ese código");
-        }
-
-        int cant = detalleProducto.getCantidad();
-        detalleProducto.setCantidad(cant + cantidad);
+        inventario.aumentarStock(codigo, cantidad);
     }
 
     public boolean disminuirStock(String codigo, int cantidad) {
@@ -282,18 +248,7 @@ public class AlmacenLogistico {
             return false;
         }
 
-        DetalleProducto detalleProducto = buscarProducto(codigo);
-        if (detalleProducto == null) {
-            return false;
-        }
-
-        int cant = detalleProducto.getCantidad();
-        if (cant >= cantidad) {
-            detalleProducto.setCantidad(cant - cantidad);
-            return true;
-        }
-
-        return false;
+        return inventario.disminuirStock(codigo, cantidad);
     }
 
     public boolean hayCantNecesarias(String codigo, int cantidad){
@@ -301,23 +256,13 @@ public class AlmacenLogistico {
             return false;
         }
 
-        DetalleProducto detalleProducto = buscarProducto(codigo);
-        if (detalleProducto == null) {
-            return false;
-        }
-
-        int cant = detalleProducto.getCantidad();
-        if (cant >= cantidad) {
-            return true;
-        }
-
-        return false;
+        return inventario.obtenerStockTotal(codigo) >= cantidad;
     }
 
     public void listarProductosYStock(){
-        for(int i = 0; i < productos.tamaño(); i++){
-            DetalleProducto detalle = productos.obtener(i);
-            System.out.println(detalle.toString());
+        ListaArray<RegistroInventario> registros = inventario.listarInventarioOrdenado();
+        for(int i = 0; i < registros.tamaño(); i++){
+            System.out.println(new DetalleProducto(registros.obtener(i)));
         }
     }
 
@@ -437,7 +382,7 @@ public class AlmacenLogistico {
             throw new UnsupportedOperationException("El pedido no puede ser null");
         }
         pedido.setPrioridad(calcularPrioridadPedido(pedido));
-        pedidosPendientes.poneEnCola(pedido);
+        pedidosPrioritarios.agregar(pedido);
     }
 
     /**
@@ -445,10 +390,10 @@ public class AlmacenLogistico {
      */
     public PedidoSucursal obtenerSiguientePedidoReabastecimiento() {
 
-        if(pedidosPendientes.esVacio()){
+        if(pedidosPrioritarios.esVacio()){
             return null;
         }
-        return pedidosPendientes.frente();
+        return pedidosPrioritarios.obtenerMaximo();
     }
 
     /**
@@ -461,14 +406,14 @@ public class AlmacenLogistico {
             return null;
         }
 
-        PedidoSucursal pedidoADespachar = pedidosPendientes.frente();
+        PedidoSucursal pedidoADespachar = pedidosPrioritarios.obtenerMaximo();
         if(!hayStockSuficienteParaPedido(pedidoADespachar)){
             return null;
         }
 
         actualizarStockDespacho(pedidoADespachar);
 
-        return pedidosPendientes.quitaDeCola();
+        return pedidosPrioritarios.quitarMaximo();
 
     }
 
@@ -477,7 +422,7 @@ public class AlmacenLogistico {
      */
     public boolean hayPedidosReabastecimientoPendientes() {
 
-        return pedidosPendientes.esVacio() ? false : true;
+        return !pedidosPrioritarios.esVacio();
     }
 
     /**
@@ -485,7 +430,26 @@ public class AlmacenLogistico {
      */
     public int cantidadPedidosReabastecimientoPendientes() {
 
-        return pedidosPendientes.tamaño();
+        return pedidosPrioritarios.tamaño();
+    }
+
+    /** Modifica la prioridad de un pedido pendiente y reordena el montículo. */
+    public boolean modificarPrioridadPedido(PedidoSucursal pedido, int nuevaPrioridad) {
+        if (pedido == null || nuevaPrioridad < 0 || !pedidosPrioritarios.actualizar(pedido)) {
+            return false;
+        }
+        pedido.setPrioridad(nuevaPrioridad);
+        return pedidosPrioritarios.actualizar(pedido);
+    }
+
+    /** Modifica la prioridad del pedido pendiente asociado a una sucursal. */
+    public boolean modificarPrioridadPedido(String codigoSucursal, int nuevaPrioridad) {
+        if (codigoSucursal == null || nuevaPrioridad < 0) {
+            return false;
+        }
+        PedidoSucursal pedido = pedidosPrioritarios.buscar(actual -> actual.getSucursal() != null
+                && codigoSucursal.equals(actual.getSucursal().getCodigo()));
+        return modificarPrioridadPedido(pedido, nuevaPrioridad);
     }
 
     /**
@@ -560,11 +524,10 @@ public class AlmacenLogistico {
 
     //1
     public int cantidadInventarioTotal(){
-        
         int suma = 0;
-
-        for(int i = 0; i < productos.tamaño(); i++){
-            suma += productos.obtener(i).getCantidad();
+        ListaArray<RegistroInventario> registros = inventario.listarInventarioOrdenado();
+        for(int i = 0; i < registros.tamaño(); i++){
+            suma += inventario.obtenerStockTotal(registros.obtener(i).getProducto().getCodigo());
         }
 
         return suma;
@@ -576,9 +539,9 @@ public class AlmacenLogistico {
 
         ListaArray<Producto> productosStockBajo = new ListaArray<>();
         
-        for(int i = 0; i < productos.tamaño(); i++){
-            
-            DetalleProducto detalle = productos.obtener(i);
+        ListaArray<RegistroInventario> registros = inventario.listarInventarioOrdenado();
+        for(int i = 0; i < registros.tamaño(); i++){
+            DetalleProducto detalle = new DetalleProducto(registros.obtener(i));
             Producto actual = detalle.getProducto();
             int cantMin = detalle.getCantidadMinima();
             int cantActual = detalle.getCantidad();
@@ -593,7 +556,7 @@ public class AlmacenLogistico {
     
     //3
     public int obtenerStockProducto(String codigo){
-        return buscarProducto(codigo).getCantidad();
+        return inventario.obtenerStockTotal(codigo);
     }
 
 
@@ -626,8 +589,9 @@ public class AlmacenLogistico {
     public ListaArray<Producto> productosSinStock() {
         ListaArray<Producto> productosSinStock = new ListaArray<>();
 
-        for (int i = 0; i < productos.tamaño(); i++) {
-            DetalleProducto detalle = productos.obtener(i);
+        ListaArray<RegistroInventario> registros = inventario.listarInventarioOrdenado();
+        for (int i = 0; i < registros.tamaño(); i++) {
+            DetalleProducto detalle = new DetalleProducto(registros.obtener(i));
 
             if (detalle.getCantidad() == 0) {
                 productosSinStock.agregar(detalle.getProducto());
