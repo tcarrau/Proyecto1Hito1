@@ -37,6 +37,15 @@ public class Inventario {
         return registros.buscar(new RegistroInventario(new Producto(codigo, null)));
     }
 
+    /**
+     * Devuelve los registros ordenados ascendentemente por código de producto.
+     */
+    public ListaArray<RegistroInventario> listarInventarioOrdenado() {
+        ListaArray<RegistroInventario> inventarioOrdenado = new ListaArray<>();
+        registros.inOrder(inventarioOrdenado::agregar);
+        return inventarioOrdenado;
+    }
+
     public void aumentarStock(String codigo, int cantidad, Sector posicion) {
         if (cantidad <= 0 || posicion == null) {
             throw new IllegalArgumentException("La cantidad y la posición deben ser válidas");
