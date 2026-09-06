@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public class EntregaProveedor {
     private Proveedor proveedor;
     private ListaArray<DetalleProducto> productos;
+    private ListaArray<RegistroInventario> mercaderiaUbicada;
     private LocalDateTime fecha;
 
     public Proveedor getProveedor() {
@@ -24,6 +25,18 @@ public class EntregaProveedor {
         this.productos = productos;
     }
 
+    /**
+     * Detalla en qué posiciones se guarda cada producto recibido.
+     * Cada registro contiene un producto y sus cantidades por posición.
+     */
+    public ListaArray<RegistroInventario> getMercaderiaUbicada() {
+        return mercaderiaUbicada;
+    }
+
+    public void setMercaderiaUbicada(ListaArray<RegistroInventario> mercaderiaUbicada) {
+        this.mercaderiaUbicada = mercaderiaUbicada;
+    }
+
     public LocalDateTime getFecha() {
         return fecha;
     }
@@ -35,6 +48,6 @@ public class EntregaProveedor {
     @Override
     public String toString() {
         return "EntregaProveedor{proveedor=" + proveedor + ", productos=" + productos
-                + ", fecha=" + fecha + "}";
+                + ", mercaderiaUbicada=" + mercaderiaUbicada + ", fecha=" + fecha + "}";
     }
 }

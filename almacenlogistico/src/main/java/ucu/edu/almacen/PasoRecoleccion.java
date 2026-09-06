@@ -4,6 +4,7 @@ package ucu.edu.almacen;
 public class PasoRecoleccion {
 
     private PedidoSucursal pedido;
+    private Producto producto;
     private StockUbicado stockOrigen;
     private int cantidad;
 
@@ -17,12 +18,26 @@ public class PasoRecoleccion {
         this.cantidad = cantidad;
     }
 
+    public PasoRecoleccion(PedidoSucursal pedido, Producto producto,
+            StockUbicado stockOrigen, int cantidad) {
+        this(pedido, stockOrigen, cantidad);
+        this.producto = producto;
+    }
+
     public PedidoSucursal getPedido() {
         return pedido;
     }
 
     public void setPedido(PedidoSucursal pedido) {
         this.pedido = pedido;
+    }
+
+    public Producto getProducto() {
+        return producto;
+    }
+
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 
     public StockUbicado getStockOrigen() {

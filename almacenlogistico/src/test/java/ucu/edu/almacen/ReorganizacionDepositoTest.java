@@ -26,7 +26,7 @@ class ReorganizacionDepositoTest {
         TDANodoNario<Sector> nodoZonaB = deposito.getSectores().agregarHijo(nodoRaiz, zonaB);
         deposito.getSectores().agregarHijo(nodoZonaA, posicionA);
 
-        assertTrue(almacen.moverSector("ZA", "ZB"));
+        assertTrue(deposito.moverSector("ZA", "ZB"));
         assertEquals(zonaB, ((NodoNario<Sector>) nodoZonaA).getPadre().getDato());
         assertEquals(2, deposito.obtenerSectoresDelSubarbol("ZA").tamaño());
     }
@@ -49,11 +49,12 @@ class ReorganizacionDepositoTest {
         deposito.getSectores().agregarHijo(nodoDestino, posicionDestino);
 
         Producto producto = new Producto("P-001", "Producto");
-        almacen.registrarProducto(producto, new StockUbicado(posicionOrigen, 6));
+        Inventario inventario = almacen.getInventario();
+        inventario.registrarProducto(producto, new StockUbicado(posicionOrigen, 6));
 
-        assertTrue(almacen.inhabilitarSector("ZO"));
+        assertTrue(inventario.inhabilitarSector(deposito, "ZO"));
 
-        RegistroInventario registro = almacen.buscarProductoInventario("P-001");
+        RegistroInventario registro = inventario.buscarProducto("P-001");
         assertFalse(zonaOrigen.isHabilitado());
         assertNull(registro.getStockUbicado(posicionOrigen));
         assertEquals(6, registro.getStockUbicado(posicionDestino).getCantidad());
