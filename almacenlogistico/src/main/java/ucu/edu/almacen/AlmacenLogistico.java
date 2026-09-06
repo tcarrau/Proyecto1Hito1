@@ -452,6 +452,148 @@ public class AlmacenLogistico {
         return true;
     }
 
+    /** Delega el movimiento del subárbol físico al depósito. */
+    public boolean moverSector(String codigoSector, String codigoNuevoPadre) {
+        return deposito != null && deposito.moverSector(codigoSector, codigoNuevoPadre);
+    }
+
+    /**
+     * Inhabilita un sector luego de mover toda la mercadería de su subárbol a
+     * posiciones habilitadas con capacidad libre fuera de dicho subárbol.
+     *
+     * @return {@code true} si se logró reubicar toda la mercadería y se
+     *         inhabilitó el sector; {@code false} si el sector no existe o no
+     *         hay capacidad disponible suficiente
+     */
+    public boolean inhabilitarSector(String codigoSector) {
+        if (deposito == null) {
+            return false;
+        }
+
+        Sector sector = deposito.buscarSector(codigoSector);
+        if (sector == null || !sector.isHabilitado()) {
+            return false;
+        }
+
+        ListaArray<Sector> sectoresAInhabilitar = deposito.obtenerSectoresDelSubarbol(codigoSector);
+        ListaArray<Sector> posicionesDestino = obtenerPosicionesDisponibles(sectoresAInhabilitar);
+
+        if (cantidadMercaderiaEnSectores(sectoresAInhabilitar)
+                > capacidadLibreTotal(posicionesDestino)) {
+            return false;
+        }
+
+        inventario.inOrder(registro -> reubicarRegistroFueraDeSectores(
+                registro, sectoresAInhabilitar, posicionesDestino));
+        sector.setHabilitado(false);
+        return true;
+    }
+
+    private ListaArray<Sector> obtenerPosicionesDisponibles(
+            ListaArray<Sector> sectoresExcluidos) {
+        ListaArray<Sector> posiciones = new ListaArray<>();
+
+        deposito.getSectores().preOrder(sector -> {
+            if (sector.getTipo() == TipoSector.POSICION
+                    && sector.isHabilitado()
+                    && !contieneSector(sectoresExcluidos, sector)
+                    && capacidadLibre(sector) > 0) {
+                posiciones.agregar(sector);
+            }
+        });
+        return posiciones;
+    }
+
+    private int cantidadMercaderiaEnSectores(ListaArray<Sector> sectores) {
+        final int[] total = {0};
+        inventario.inOrder(registro -> {
+            ListaArray<StockUbicado> ubicaciones = registro.getUbicaciones();
+            for (int i = 0; i < ubicaciones.tamaño(); i++) {
+                StockUbicado stock = ubicaciones.obtener(i);
+                if (contieneSector(sectores, stock.getPosicion())) {
+                    total[0] += stock.getCantidad();
+                }
+            }
+        });
+        return total[0];
+    }
+
+    private int capacidadLibreTotal(ListaArray<Sector> posiciones) {
+        int total = 0;
+        for (int i = 0; i < posiciones.tamaño(); i++) {
+            total += capacidadLibre(posiciones.obtener(i));
+        }
+        return total;
+    }
+
+    private int capacidadLibre(Sector posicion) {
+        return Math.max(0, posicion.getCapacidad() - cantidadOcupada(posicion));
+    }
+
+    private int cantidadOcupada(Sector posicion) {
+        final int[] ocupada = {0};
+        inventario.inOrder(registro -> {
+            StockUbicado stock = registro.getStockUbicado(posicion);
+            if (stock != null) {
+                ocupada[0] += stock.getCantidad();
+            }
+        });
+        return ocupada[0];
+    }
+
+    private void reubicarRegistroFueraDeSectores(RegistroInventario registro,
+            ListaArray<Sector> sectoresOrigen, ListaArray<Sector> posicionesDestino) {
+        ListaArray<StockUbicado> ubicaciones = registro.getUbicaciones();
+        int cantidadOriginalUbicaciones = ubicaciones.tamaño();
+
+        for (int i = 0; i < cantidadOriginalUbicaciones; i++) {
+            StockUbicado origen = ubicaciones.obtener(i);
+            if (!contieneSector(sectoresOrigen, origen.getPosicion())
+                    || origen.getCantidad() == 0) {
+                continue;
+            }
+
+            int pendiente = origen.getCantidad();
+            for (int j = 0; j < posicionesDestino.tamaño() && pendiente > 0; j++) {
+                Sector destino = posicionesDestino.obtener(j);
+                int aMover = Math.min(pendiente, capacidadLibre(destino));
+
+                if (aMover > 0) {
+                    StockUbicado stockDestino = registro.getStockUbicado(destino);
+                    if (stockDestino == null) {
+                        ubicaciones.agregar(new StockUbicado(destino, aMover));
+                    } else {
+                        stockDestino.setCantidad(stockDestino.getCantidad() + aMover);
+                    }
+                    origen.setCantidad(origen.getCantidad() - aMover);
+                    pendiente -= aMover;
+                }
+            }
+        }
+
+        for (int i = cantidadOriginalUbicaciones - 1; i >= 0; i--) {
+            StockUbicado stock = ubicaciones.obtener(i);
+            if (contieneSector(sectoresOrigen, stock.getPosicion())
+                    && stock.getCantidad() == 0) {
+                ubicaciones.remover(i);
+            }
+        }
+    }
+
+    private boolean contieneSector(ListaArray<Sector> sectores, Sector sector) {
+        if (sector == null || sector.getCodigo() == null) {
+            return false;
+        }
+
+        for (int i = 0; i < sectores.tamaño(); i++) {
+            Sector actual = sectores.obtener(i);
+            if (sector.getCodigo().equals(actual.getCodigo())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** Indica si la suma de todas las ubicaciones alcanza la cantidad solicitada. */
     public boolean hayCantNecesariasRegistro(String codigo, int cantidad) {
         if (cantidad <= 0) {
