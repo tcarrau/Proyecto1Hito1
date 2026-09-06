@@ -9,6 +9,7 @@ public class RegistroInventario implements Comparable<RegistroInventario> {
 
     private Producto producto;
     private ListaArray<StockUbicado> ubicaciones;
+    private int cantidadMinima;
 
     public RegistroInventario() {
         this.ubicaciones = new ListaArray<>();
@@ -33,6 +34,14 @@ public class RegistroInventario implements Comparable<RegistroInventario> {
 
     public void setUbicaciones(ListaArray<StockUbicado> ubicaciones) {
         this.ubicaciones = ubicaciones;
+    }
+
+    public int getCantidadMinima() {
+        return cantidadMinima;
+    }
+
+    public void setCantidadMinima(int cantidadMinima) {
+        this.cantidadMinima = cantidadMinima;
     }
 
     public StockUbicado getStockUbicado(Sector sector) {

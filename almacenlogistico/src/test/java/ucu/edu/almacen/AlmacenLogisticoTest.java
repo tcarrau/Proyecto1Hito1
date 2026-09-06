@@ -213,6 +213,20 @@ class AlmacenLogisticoTest {
     }
 
     @Test
+    void modificarPrioridadReordenaUnPedidoPendienteEnElMonticulo() {
+        AlmacenLogistico almacen = new AlmacenLogistico();
+        PedidoSucursal pedidoBajaPrioridad = pedidoReabastecimiento("P-001", 1, 50);
+        PedidoSucursal pedidoAltaPrioridad = pedidoReabastecimiento("P-002", 1, 100);
+
+        almacen.registrarPedidoReabastecimiento(pedidoBajaPrioridad);
+        almacen.registrarPedidoReabastecimiento(pedidoAltaPrioridad);
+
+        assertTrue(almacen.modificarPrioridadPedido(pedidoBajaPrioridad, 200));
+        assertEquals(200, pedidoBajaPrioridad.getPrioridad());
+        assertSame(pedidoBajaPrioridad, almacen.obtenerSiguientePedidoReabastecimiento());
+    }
+
+    @Test
     void despacharPedidoReabastecimientoDescuentaStockYLoQuitaDeLaCola() {
         AlmacenLogistico almacen = almacenConProducto("P-001");
         almacen.aumentarStock("P-001", 10);

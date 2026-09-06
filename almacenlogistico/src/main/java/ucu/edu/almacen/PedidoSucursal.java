@@ -2,7 +2,7 @@ package ucu.edu.almacen;
 import ucu.edu.implementaciones.ListaArray;
 import java.time.*;
 
-public class PedidoSucursal {
+public class PedidoSucursal implements Comparable<PedidoSucursal> {
     private int prioridad;
     private ListaArray<DetalleProducto> productos;
     private ListaArray<PasoRecoleccion> pasosRecoleccion = new ListaArray<>();
@@ -48,6 +48,18 @@ public class PedidoSucursal {
 
     public void setSucursal(Sucursal sucursal) {
         this.sucursal = sucursal;
+    }
+
+    @Override
+    public int compareTo(PedidoSucursal otro) {
+        int comparacion = Integer.compare(prioridad, otro.prioridad);
+        if (comparacion != 0) {
+            return comparacion;
+        }
+        if (fecha == null || otro.fecha == null) {
+            return 0;
+        }
+        return otro.fecha.compareTo(fecha);
     }
 
     @Override

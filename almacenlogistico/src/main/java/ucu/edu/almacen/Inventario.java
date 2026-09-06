@@ -7,9 +7,12 @@ import ucu.edu.implementaciones.ListaArray;
 public class Inventario {
 
     private ArbolAVL<RegistroInventario> registros;
+    private Sector posicionSinUbicacion;
 
     public Inventario() {
         this.registros = new ArbolAVL<>();
+        this.posicionSinUbicacion = new Sector("SIN-UBICACION", "Sin ubicación",
+                TipoSector.POSICION, Integer.MAX_VALUE);
     }
 
     public ArbolAVL<RegistroInventario> getRegistros() {
@@ -18,16 +21,26 @@ public class Inventario {
 
     public void registrarProducto(Producto producto, StockUbicado ubicacion) {
         validarProducto(producto);
-        if (ubicacion == null) {
-            throw new IllegalArgumentException("La ubicación no puede ser null");
+        if (ubicacion == null || ubicacion.getCantidad() <= 0) {
+            throw new IllegalArgumentException("La ubicación y su cantidad deben ser válidas");
         }
         if (buscarProducto(producto.getCodigo()) != null) {
             return;
         }
 
+        validarUbicacionParaAlmacenar(ubicacion.getPosicion(), ubicacion.getCantidad());
+
         RegistroInventario registro = new RegistroInventario(producto);
         registro.getUbicaciones().agregar(ubicacion);
         registros.insertar(registro);
+    }
+
+    /** Registra un producto sin stock para conservar la operación del primer hito. */
+    public void registrarProducto(Producto producto) {
+        validarProducto(producto);
+        if (buscarProducto(producto.getCodigo()) == null) {
+            registros.insertar(new RegistroInventario(producto));
+        }
     }
 
     public RegistroInventario buscarProducto(String codigo) {
@@ -46,6 +59,33 @@ public class Inventario {
         return inventarioOrdenado;
     }
 
+    /** Devuelve una vista de compatibilidad para las funciones del primer hito. */
+    public DetalleProducto buscarDetalleProducto(String codigo) {
+        RegistroInventario registro = buscarProducto(codigo);
+        return registro == null ? null : new DetalleProducto(registro);
+    }
+
+    /** Aumenta stock heredado en una posición técnica sin ubicación física asignada. */
+    public void aumentarStock(String codigo, int cantidad) {
+        aumentarStock(codigo, cantidad, posicionSinUbicacion);
+    }
+
+    /** Descuenta stock total de un producto, recorriendo sus ubicaciones disponibles. */
+    public boolean disminuirStock(String codigo, int cantidad) {
+        if (cantidad <= 0 || obtenerStockTotal(codigo) < cantidad) {
+            return false;
+        }
+        RegistroInventario registro = buscarProducto(codigo);
+        int pendiente = cantidad;
+        for (int i = 0; i < registro.getUbicaciones().tamaño() && pendiente > 0; i++) {
+            StockUbicado stock = registro.getUbicaciones().obtener(i);
+            int descontar = Math.min(stock.getCantidad(), pendiente);
+            stock.setCantidad(stock.getCantidad() - descontar);
+            pendiente -= descontar;
+        }
+        return true;
+    }
+
     public void aumentarStock(String codigo, int cantidad, Sector posicion) {
         if (cantidad <= 0 || posicion == null) {
             throw new IllegalArgumentException("La cantidad y la posición deben ser válidas");
@@ -54,6 +94,7 @@ public class Inventario {
         if (registro == null) {
             throw new IllegalArgumentException("No existe un producto con ese código");
         }
+        validarUbicacionParaAlmacenar(posicion, cantidad);
         StockUbicado stock = registro.getStockUbicado(posicion);
         if (stock == null) {
             registro.getUbicaciones().agregar(new StockUbicado(posicion, cantidad));
@@ -76,6 +117,10 @@ public class Inventario {
     }
 
     public boolean reubicarMercaderia(String codigo, Sector origen, Sector destino, int cantidad) {
+        if (cantidad <= 0 || destino == null) {
+            return false;
+        }
+        validarUbicacionParaAlmacenar(destino, cantidad);
         if (!disminuirStock(codigo, cantidad, origen)) {
             return false;
         }
@@ -94,6 +139,38 @@ public class Inventario {
             total += ubicaciones.obtener(i).getCantidad();
         }
         return total;
+    }
+
+    /**
+     * Capacidad expresada en unidades de producto. Para un sector compuesto
+     * se suman exclusivamente las posiciones de su subárbol para no contar
+     * dos veces la capacidad de los niveles intermedios.
+     */
+    public int obtenerCapacidadTotal(Deposito deposito, String codigoSector) {
+        return capacidadTotal(posicionesDelSector(deposito, codigoSector));
+    }
+
+    /** Devuelve las unidades almacenadas en las posiciones del sector y sus hijos. */
+    public int obtenerOcupacion(Deposito deposito, String codigoSector) {
+        ListaArray<Sector> posiciones = posicionesDelSector(deposito, codigoSector);
+        int ocupacion = 0;
+        for (int i = 0; i < posiciones.tamaño(); i++) {
+            ocupacion += cantidadOcupada(posiciones.obtener(i));
+        }
+        return ocupacion;
+    }
+
+    /** Devuelve la capacidad aún disponible en el sector y todos sus descendientes. */
+    public int obtenerCapacidadDisponible(Deposito deposito, String codigoSector) {
+        ListaArray<Sector> posiciones = posicionesDelSector(deposito, codigoSector);
+        int disponible = 0;
+        for (int i = 0; i < posiciones.tamaño(); i++) {
+            Sector posicion = posiciones.obtener(i);
+            if (posicion.isHabilitado()) {
+                disponible += capacidadLibre(posicion);
+            }
+        }
+        return disponible;
     }
 
     /**
@@ -248,6 +325,30 @@ public class Inventario {
         return total;
     }
 
+    private ListaArray<Sector> posicionesDelSector(Deposito deposito, String codigoSector) {
+        if (deposito == null || deposito.buscarSector(codigoSector) == null) {
+            throw new IllegalArgumentException("No existe el sector consultado");
+        }
+
+        ListaArray<Sector> posiciones = new ListaArray<>();
+        ListaArray<Sector> sectores = deposito.obtenerSectoresDelSubarbol(codigoSector);
+        for (int i = 0; i < sectores.tamaño(); i++) {
+            Sector sector = sectores.obtener(i);
+            if (sector.getTipo() == TipoSector.POSICION) {
+                posiciones.agregar(sector);
+            }
+        }
+        return posiciones;
+    }
+
+    private int capacidadTotal(ListaArray<Sector> posiciones) {
+        int total = 0;
+        for (int i = 0; i < posiciones.tamaño(); i++) {
+            total += posiciones.obtener(i).getCapacidad();
+        }
+        return total;
+    }
+
     private int capacidadLibre(Sector posicion) {
         return Math.max(0, posicion.getCapacidad() - cantidadOcupada(posicion));
     }
@@ -259,6 +360,18 @@ public class Inventario {
             if (stock != null) total[0] += stock.getCantidad();
         });
         return total[0];
+    }
+
+    private void validarUbicacionParaAlmacenar(Sector posicion, int cantidad) {
+        if (posicion == null || posicion.getTipo() != TipoSector.POSICION) {
+            throw new IllegalArgumentException("La mercadería solo puede ubicarse en una posición");
+        }
+        if (!posicion.isHabilitado()) {
+            throw new IllegalStateException("La posición está inhabilitada");
+        }
+        if (cantidad > capacidadLibre(posicion)) {
+            throw new IllegalStateException("La posición no tiene capacidad disponible suficiente");
+        }
     }
 
     private void moverRegistro(RegistroInventario registro, ListaArray<Sector> origenes,
