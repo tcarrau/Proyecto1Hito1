@@ -142,6 +142,8 @@ public class Inventario {
     }
 
     /**
+     * Consulta 6: capacidad total del sector, en unidades de producto.
+     *
      * Capacidad expresada en unidades de producto. Para un sector compuesto
      * se suman exclusivamente las posiciones de su subárbol para no contar
      * dos veces la capacidad de los niveles intermedios.
@@ -150,7 +152,7 @@ public class Inventario {
         return capacidadTotal(posicionesDelSector(deposito, codigoSector));
     }
 
-    /** Devuelve las unidades almacenadas en las posiciones del sector y sus hijos. */
+    /** Consulta 7: unidades almacenadas en el sector y sus descendientes. */
     public int obtenerOcupacion(Deposito deposito, String codigoSector) {
         ListaArray<Sector> posiciones = posicionesDelSector(deposito, codigoSector);
         int ocupacion = 0;
@@ -160,7 +162,7 @@ public class Inventario {
         return ocupacion;
     }
 
-    /** Devuelve la capacidad aún disponible en el sector y todos sus descendientes. */
+    /** Consulta 8: capacidad disponible del sector y todos sus descendientes. */
     public int obtenerCapacidadDisponible(Deposito deposito, String codigoSector) {
         ListaArray<Sector> posiciones = posicionesDelSector(deposito, codigoSector);
         int disponible = 0;
