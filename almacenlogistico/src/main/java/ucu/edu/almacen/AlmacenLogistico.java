@@ -522,7 +522,7 @@ public class AlmacenLogistico {
             ==================================
     */
 
-    //1
+    // Consulta 1: cantidad total de unidades en inventario.
     public int cantidadInventarioTotal(){
         int suma = 0;
         ListaArray<RegistroInventario> registros = inventario.listarInventarioOrdenado();
@@ -533,7 +533,7 @@ public class AlmacenLogistico {
         return suma;
     }
 
-    //2
+    // Consulta 2: productos cuyo stock es igual o menor al mínimo definido.
     public ListaArray<Producto> productosConStockBajo() {
         // devolver los que estén debajo de su stock mínimo
 
@@ -554,13 +554,13 @@ public class AlmacenLogistico {
         return productosStockBajo;
     }
     
-    //3
+    // Consulta 3: stock total disponible de un producto por código.
     public int obtenerStockProducto(String codigo){
         return inventario.obtenerStockTotal(codigo);
     }
 
 
-    //4
+    // Consulta 4: proveedores que tienen entregas pendientes, sin repetidos.
     public ListaArray<Proveedor> proveedoresConEntregasPendientes(){
         ListaArray<Proveedor> proveedoresPendientes = new ListaArray<>();
 
@@ -585,7 +585,7 @@ public class AlmacenLogistico {
         return proveedoresPendientes;
     }
 
-    //5
+    // Consulta 5: productos registrados que no tienen unidades en stock.
     public ListaArray<Producto> productosSinStock() {
         ListaArray<Producto> productosSinStock = new ListaArray<>();
 
