@@ -109,6 +109,7 @@ public class Main {
             System.out.println("10. Listar productos con stock bajo");
             System.out.println("11. Listar productos sin stock");
             System.out.println("12. Ver cantidad total del inventario");
+            System.out.println("13. Buscar producto por código a gran escala");
             System.out.println("0. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
             opcion = leerOpcion(scanner);
@@ -149,6 +150,9 @@ public class Main {
                     break;
                 case 12:
                     verInventarioTotal(almacen);
+                    break;
+                case 13:
+                    compararBusquedaProductoConHito1(scanner);
                     break;
                 case 0:
                     break;
@@ -377,6 +381,72 @@ public class Main {
 
     private static void verInventarioTotal(AlmacenLogistico almacen) {
         System.out.println("Cantidad de inventario total: " + almacen.cantidadInventarioTotal());
+    }
+
+    /**
+     * Compara buscarProducto tal como funcionaba en el Hito 1 (recorrido lineal
+     * sobre ListaArray) contra la implementación actual de Inventario, que por
+     * dentro usa el árbol AVL — la misma función que corre la opción 7 de este
+     * menú, solo que acá se prueba con un volumen grande para que la diferencia
+     * se note.
+     *
+     * <p>Arma su propio inventario de prueba: no toca el inventario real que ya
+     * hayan cargado en esta sesión.</p>
+     */
+    private static void compararBusquedaProductoConHito1(Scanner scanner) {
+        Integer cantidad = leerEntero(scanner, "¿Con cuántos productos simular la búsqueda? (ej: 10000): ");
+
+        if (cantidad == null || cantidad <= 0) {
+            System.out.println("La cantidad debe ser mayor a cero.");
+            return;
+        }
+
+        System.out.println("Cargando " + cantidad
+                + " productos en un inventario de prueba (no afecta el inventario actual)...");
+
+        // Inventario real del proyecto: buscarProducto busca por dentro con ArbolAVL.
+        Inventario inventarioActual = new Inventario();
+        // Reconstrucción de cómo resolvía la misma búsqueda el Hito 1: recorrido lineal.
+        ListaArray<RegistroInventario> inventarioHito1 = new ListaArray<>();
+
+        for (int i = 1; i <= cantidad; i++) {
+            Producto producto = new Producto(String.format("P%07d", i), "Producto " + i);
+            inventarioActual.registrarProducto(producto);
+            inventarioHito1.agregar(new RegistroInventario(producto));
+        }
+
+        // Código que no existe: peor caso real para las dos formas de buscar.
+        String codigoBuscado = "P9999999";
+
+        final int repeticiones = 5;
+        long[] tiemposHito1 = new long[repeticiones];
+        long[] tiemposActual = new long[repeticiones];
+
+        for (int i = 0; i < repeticiones; i++) {
+            long inicioHito1 = System.nanoTime();
+            inventarioHito1.buscar(r -> r.getProducto().getCodigo().equals(codigoBuscado));
+            tiemposHito1[i] = System.nanoTime() - inicioHito1;
+
+            long inicioActual = System.nanoTime();
+            inventarioActual.buscarProducto(codigoBuscado);
+            tiemposActual[i] = System.nanoTime() - inicioActual;
+        }
+
+        double medianaHito1 = medianaEnMs(tiemposHito1);
+        double medianaActual = medianaEnMs(tiemposActual);
+
+        System.out.println();
+        System.out.println("Buscando el código " + codigoBuscado + " (no existe: peor caso para las dos formas de buscar)");
+        System.out.printf("buscarProducto en el Hito 1 (recorrido lineal, ListaArray): %.3f ms%n", medianaHito1);
+        System.out.printf("buscarProducto ahora (Inventario, árbol AVL):               %.3f ms%n", medianaActual);
+        System.out.printf("La implementación actual fue %.1f veces más rápida.%n", medianaHito1 / medianaActual);
+    }
+
+    private static double medianaEnMs(long[] tiemposNanos) {
+        long[] copia = tiemposNanos.clone();
+        java.util.Arrays.sort(copia);
+        long medianaNanos = copia[copia.length / 2];
+        return medianaNanos / 1_000_000.0;
     }
 
     /*
