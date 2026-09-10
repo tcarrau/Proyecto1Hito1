@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: ucu.edu.uy.MenuConsolaTest$SucursalesYReabastecimiento
+-------------------------------------------------------------------------------
+Tests run: 21, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.073 s -- in ucu.edu.uy.MenuConsolaTest$SucursalesYReabastecimiento

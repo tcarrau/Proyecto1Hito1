@@ -1,46 +1,46 @@
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAArbolBinario.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAArbolBinarioBusqueda.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAArbolNario.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDACola.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAConjunto.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAElemento.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDALista.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDANodoNario.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/aed/tda/TDAPila.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/AlmacenLogistico.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/Deposito.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/DetalleProducto.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/EntregaProveedor.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/EstadoTerminal.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/Inventario.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/OperacionCarga.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/PasoRecoleccion.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/PedidoSucursal.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/Producto.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/Proveedor.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/RegistroInventario.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/Sector.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/StockUbicado.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/Sucursal.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/TerminalCarga.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/almacen/TipoSector.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ABB.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ArbolAVL.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ArbolBinario.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ArbolNario.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/Cola.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ColaPrioridad.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ColaPrioridadDobleEnlazada.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/Conjunto.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/Elemento.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaArray.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaCircularDoble.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaCircularSimple.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaDoblementeEnlazada.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/ListaSimplementeEnlazada.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/MonticuloBinario.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/MonticuloMaximo.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/NodoAVL.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/NodoNario.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/implementaciones/Pila.java
-/Users/tomascarrau/Documents/UCU/2doSemestre/AlgoritmosYEstrucutas/Proyecto1Hito1/almacenlogistico/src/main/java/ucu/edu/uy/Main.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\aed\tda\TDAArbolBinario.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\aed\tda\TDAArbolBinarioBusqueda.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\aed\tda\TDAArbolNario.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\aed\tda\TDACola.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\aed\tda\TDAConjunto.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\aed\tda\TDAElemento.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\aed\tda\TDALista.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\aed\tda\TDANodoNario.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\aed\tda\TDAPila.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\AlmacenLogistico.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\Deposito.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\DetalleProducto.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\EntregaProveedor.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\EstadoTerminal.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\Inventario.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\OperacionCarga.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\PasoRecoleccion.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\PedidoSucursal.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\Producto.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\Proveedor.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\RegistroInventario.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\Sector.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\StockUbicado.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\Sucursal.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\TerminalCarga.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\almacen\TipoSector.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ABB.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ArbolAVL.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ArbolBinario.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ArbolNario.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\Cola.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ColaPrioridad.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ColaPrioridadDobleEnlazada.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\Conjunto.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\Elemento.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ListaArray.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ListaCircularDoble.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ListaCircularSimple.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ListaDoblementeEnlazada.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\ListaSimplementeEnlazada.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\MonticuloBinario.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\MonticuloMaximo.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\NodoAVL.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\NodoNario.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\Implementaciones\Pila.java
+C:\Users\Martinez Capurro\Documents\GitHub\Proyecto1Hito1\almacenlogistico\src\main\java\ucu\edu\uy\Main.java
